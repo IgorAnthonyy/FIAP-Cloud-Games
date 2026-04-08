@@ -18,7 +18,7 @@ public static class ProgramExtensions
     public static IServiceCollection ConfigureApplication(this IServiceCollection services)
     {
         // services.AddScoped<IUserApplicationService, UserApplicationService>();
-        // Injeção de dependência para a camada de aplication
+        // Injeção de dependência para a camada de application
 
         return services;
     }
