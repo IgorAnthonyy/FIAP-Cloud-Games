@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0": {
+      "fcg.domain": {
+        "type": "Project"
+      },
+      "fcg.exception": {
+        "type": "Project"
+      }
+    }
+  }
+}
