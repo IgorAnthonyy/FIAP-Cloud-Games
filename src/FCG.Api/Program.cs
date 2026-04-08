@@ -1,6 +1,5 @@
 using FCG.Api.Extensions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FCG.Api;
 
