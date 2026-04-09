@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using FCG.Domain.Interfaces;
+using FCG.Infrastructure.Persistence;
 using FCG.Infrastructure.Settings;
 
 namespace FCG.Api.Extensions;
@@ -35,6 +37,7 @@ public static class ProgramExtensions
     {
         // services.AddScoped<IUserRepository, UserRepository>();
         // Injeção de dependência para a camada de infrastructure
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }

@@ -7,14 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FCG.Infrastructure.Repositories;
 
-public abstract class BaseRepository<T> : IBaseRepository<T> where T : class, IBaseEntity
+public abstract class BaseRepository<T>(ApplicationDbContext context) : IBaseRepository<T> where T : class, IBaseEntity
 {
-    protected ApplicationDbContext _context;
-
-    public BaseRepository(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    protected ApplicationDbContext _context = context;
 
     protected IQueryable<TEntity> BaseQuery<TEntity>(bool tracking = false) where TEntity : class, IBaseEntity
     {
@@ -46,13 +41,13 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : class, IB
         return entity;
     }
 
-    public async Task<T> Update(T entity)
+    public T Update(T entity)
     {
         _context.Set<T>().Update(entity);
         return entity;
     }
 
-    public async Task<T> Delete(T entity)
+    public T Delete(T entity)
     {
         _context.Set<T>().Remove(entity);
         return entity;
