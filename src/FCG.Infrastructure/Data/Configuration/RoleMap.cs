@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FCG.Infrastructure.Persistence;
+namespace FCG.Infrastructure.Data.Configuration;
 
 public class RoleMap : IEntityTypeConfiguration<Role>
 {

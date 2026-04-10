@@ -3,12 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FCG.Application.Interfaces;
+namespace FCG.Domain.Interfaces;
 
-public interface IRoleRepository
+public interface IRoleRepository : IBaseRepository<Role>
 {
     Task<IEnumerable<Role>> GetByUserId(Guid userId);
-
-    Task<Role> Insert(Role role);
-    Role Delete(Role role);
 }

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FCG.Application.Interfaces;
 using FCG.Domain.Entities;
+using FCG.Domain.Interfaces;
 using FCG.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
