@@ -1,10 +1,12 @@
+using FCG.Domain.Interfaces;
+using FCG.Infrastructure.Data;
+using FCG.Infrastructure.Persistence;
+using FCG.Infrastructure.Settings;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using FCG.Domain.Interfaces;
-using FCG.Infrastructure.Persistence;
-using FCG.Infrastructure.Settings;
 
 namespace FCG.Api.Extensions;
 
@@ -33,10 +35,13 @@ public static class ProgramExtensions
         return services;
     }
 
-    public static IServiceCollection ConfigureInfrastructure(this IServiceCollection services)
+    public static IServiceCollection ConfigureInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         // services.AddScoped<IUserRepository, UserRepository>();
         // Injeção de dependência para a camada de infrastructure
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;

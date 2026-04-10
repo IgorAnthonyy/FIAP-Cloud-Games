@@ -16,7 +16,7 @@ public class Program
             .ConfigureApi()
             .ConfigureApplication()
             .ConfigureDomain()
-            .ConfigureInfrastructure();
+            .ConfigureInfrastructure(builder.Configuration);
 
         #endregion
 
