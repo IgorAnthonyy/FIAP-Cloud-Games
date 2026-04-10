@@ -1,10 +1,25 @@
+using System.Reflection;
+using FCG.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace FCG.Infrastructure.Data;
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
+namespace FCG.Infrastructure.Data
 {
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    public class ApplicationDbContext : DbContext 
     {
-        base.OnModelCreating(modelBuilder);
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
+
+        // Tables
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+
+        // Mapping
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        }
     }
 }

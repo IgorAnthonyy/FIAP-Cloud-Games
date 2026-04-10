@@ -1,5 +1,9 @@
 using FCG.Api.Extensions;
+using FCG.Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FCG.Api;
 
@@ -16,7 +20,7 @@ public class Program
             .ConfigureApi()
             .ConfigureApplication()
             .ConfigureDomain()
-            .ConfigureInfrastructure(builder.Configuration);
+            .ConfigureInfrastructure(builder.Configuration)
 
         #endregion
 

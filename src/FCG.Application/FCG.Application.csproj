@@ -11,4 +11,8 @@
     <ProjectReference Include="..\FCG.Exception\FCG.Exception.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+
 </Project>

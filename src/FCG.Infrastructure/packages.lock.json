@@ -307,6 +307,13 @@
           "System.Composition.Runtime": "9.0.0"
         }
       },
+      "fcg.application": {
+        "type": "Project",
+        "dependencies": {
+          "FCG.Domain": "[1.0.0, )",
+          "FCG.Exception": "[1.0.0, )"
+        }
+      },
       "fcg.domain": {
         "type": "Project"
       },
