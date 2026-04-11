@@ -17,4 +17,5 @@ public class RoleRepository(ApplicationDbContext context) : BaseRepository<Role>
             .Where(x => x.UserId == userId)
             .ToListAsync();
     }
+
 }

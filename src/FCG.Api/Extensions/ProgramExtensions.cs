@@ -1,13 +1,23 @@
+using AutoMapper;
+using FCG.Application.DTOs;
+using FCG.Application.Interfaces;
+using FCG.Application.Mapper;
+using FCG.Application.Services;
+using FCG.Application.Validator;
+using FCG.Domain.Entities;
 using FCG.Domain.Interfaces;
 using FCG.Infrastructure.Data;
+using FCG.Infrastructure.Helper;
 using FCG.Infrastructure.Persistence;
 using FCG.Infrastructure.Repositories;
 using FCG.Infrastructure.Settings;
+using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi;
 
 namespace FCG.Api.Extensions;
@@ -39,7 +49,24 @@ public static class ProgramExtensions
     {
         // services.AddScoped<IUserApplicationService, UserApplicationService>();
         // Injeção de dependência para a camada de application
+        services.AddScoped<IValidator<UserDTO>, UserValidator>();
+        services.AddScoped<IPasswordHashService, PasswordHashService>();
+        services.AddScoped<IUserService, UserService>();
+        var loggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder.AddConsole();
+        });
 
+        
+        var mapperConfig = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<UserMapper>(); // seus profiles
+        }, loggerFactory);
+
+        IMapper mapper = mapperConfig.CreateMapper();
+
+        
+        services.AddSingleton(mapper);
         return services;
     }
 

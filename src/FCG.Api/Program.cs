@@ -14,7 +14,6 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         #region Services
-
         builder.Services
             .ConfigureSettings(builder.Configuration)
             .ConfigureApi()
