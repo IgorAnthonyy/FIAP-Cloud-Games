@@ -7,6 +7,7 @@ using FCG.Application.Validator;
 using FCG.Domain.Entities;
 using FCG.Domain.Interfaces;
 using FCG.Infrastructure.Data;
+using FCG.Infrastructure.Email.Service;
 using FCG.Infrastructure.Helper;
 using FCG.Infrastructure.Persistence;
 using FCG.Infrastructure.Repositories;
@@ -52,6 +53,7 @@ public static class ProgramExtensions
         services.AddScoped<IValidator<UserDTO>, UserValidator>();
         services.AddScoped<IPasswordHashService, PasswordHashService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IEmailService, EmailService>();
         var loggerFactory = LoggerFactory.Create(builder =>
         {
             builder.AddConsole();
@@ -87,7 +89,8 @@ public static class ProgramExtensions
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
-
+        services.Configure<EmailSettings>(
+        configuration.GetSection("Email"));
         return services;
     }
 

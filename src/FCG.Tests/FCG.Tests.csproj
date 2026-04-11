@@ -21,12 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infra\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\FCG.Application\FCG.Application.csproj" />
     <ProjectReference Include="..\FCG.Domain\FCG.Domain.csproj" />
+    <ProjectReference Include="..\FCG.Infrastructure\FCG.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

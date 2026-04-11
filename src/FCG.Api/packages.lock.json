@@ -42,6 +42,11 @@
         "resolved": "12.1.1",
         "contentHash": "EPpkIe1yh1a0OXyC100oOA8WMbZvqUu5plwhvYcb7oSELfyUZzfxV48BLhvs3kKo4NwG7MGLNgy1RJiYtT8Dpw=="
       },
+      "Handlebars.Net": {
+        "type": "Transitive",
+        "resolved": "2.1.6",
+        "contentHash": "WsYWCEXsIM6hEOSOSRHtIYLjC8BnbT5MVmqhNKRqUI7qiv0t8x3nJiBTEv0ZZfvUAMAFnadGIzSsS/U2anVG1Q=="
+      },
       "Humanizer.Core": {
         "type": "Transitive",
         "resolved": "2.14.1",
@@ -335,6 +340,7 @@
           "FCG.Application": "[1.0.0, )",
           "FCG.Domain": "[1.0.0, )",
           "FCG.Exception": "[1.0.0, )",
+          "Handlebars.Net": "[2.1.6, )",
           "Microsoft.AspNet.Identity.Core": "[2.2.4, )",
           "Microsoft.EntityFrameworkCore": "[10.0.5, )",
           "Microsoft.EntityFrameworkCore.Design": "[10.0.5, )",

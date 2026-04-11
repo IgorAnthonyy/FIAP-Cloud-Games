@@ -4,6 +4,7 @@ using System.Text;
 
 namespace FCG.Application.Interfaces
 {
+   
     public interface IPasswordHashService
     {
         string GenerateHash(string password);

@@ -18,20 +18,27 @@ namespace FCG.Application.Services
         private readonly IRoleRepository _roleRepository;
         private readonly IPasswordHashService _passwordHashService;
         private readonly IValidator<UserDTO> _validator;
+        private readonly IEmailService _emailService;
         private readonly IMapper _mapper;
-        public UserService(IUnitOfWork unitOfWork, IPasswordHashService passwordHashService, IUserRepository userRepository, IValidator<UserDTO> validator, IMapper mapper, IRoleRepository roleRepository) : base(unitOfWork)
+        public UserService(IUnitOfWork unitOfWork, 
+            IPasswordHashService passwordHashService, 
+            IUserRepository userRepository, IValidator<UserDTO> validator, 
+            IMapper mapper, 
+            IRoleRepository roleRepository, IEmailService emailService) : base(unitOfWork)
         {
             _userRepository = userRepository;
             _validator = validator;
             _mapper = mapper;
             _roleRepository = roleRepository;
             _passwordHashService = passwordHashService;
+            _emailService = emailService;
         }
 
         public async Task<UserViewModel> CriarUsuario(UserDTO user)
         {
             var userView = await CriarUsuario(user, "PADRAO");
             //Envia Email aqui de boas vindas
+            await _emailService.EnviarEmail(userView);
             return userView;
         }
 

@@ -13,12 +13,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Handlebars.Net" Version="2.1.6" />
     <PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.5" />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.5" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
   </ItemGroup>
+	
+    <ItemGroup>
+      <None Include="Email\Hbs\*.hbs" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
 
 </Project>
