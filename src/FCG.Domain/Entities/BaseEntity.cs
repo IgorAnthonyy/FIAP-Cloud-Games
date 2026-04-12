@@ -6,4 +6,9 @@ namespace FCG.Domain.Entities;
 public class BaseEntity : IBaseEntity
 {
     public Guid Id { get; set; }
+
+    public void CreateBaseEntity()
+    {
+        Id = Guid.NewGuid();
+    }
 }

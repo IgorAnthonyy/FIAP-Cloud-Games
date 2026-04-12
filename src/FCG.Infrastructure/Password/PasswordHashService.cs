@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FCG.Infrastructure.Helper
+namespace FCG.Infrastructure.PasswordHelper
 {
     public class PasswordHashService : IPasswordHashService
     {

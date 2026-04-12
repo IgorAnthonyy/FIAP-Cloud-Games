@@ -10,10 +10,11 @@ using FCG.Domain.Interfaces.IService;
 using FCG.Domain.Services;
 using FCG.Infrastructure.Data;
 using FCG.Infrastructure.EmailHelper.Service;
-using FCG.Infrastructure.Helper;
+using FCG.Infrastructure.PasswordHelper;
 using FCG.Infrastructure.Persistence;
 using FCG.Infrastructure.Repositories;
 using FCG.Infrastructure.Settings;
+using FCG.Api.Middlewares;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -50,8 +51,6 @@ public static class ProgramExtensions
 
     public static IServiceCollection ConfigureApplication(this IServiceCollection services)
     {
-        // services.AddScoped<IUserApplicationService, UserApplicationService>();
-        // Injeção de dependência para a camada de application
         services.AddScoped<IValidator<UserDTO>, UserValidator>();
         
         services.AddScoped<IUserService, UserService>();
@@ -76,8 +75,6 @@ public static class ProgramExtensions
 
     public static IServiceCollection ConfigureDomain(this IServiceCollection services)
     {
-        // services.AddScoped<IUserService, UserService>();
-        // Injeção de dependência para a camada de domain
         services.AddScoped<IPasswordHashService, PasswordHashService>();
         services.AddScoped<IUserDomainService, UserDomainService>();
         return services;
@@ -99,6 +96,8 @@ public static class ProgramExtensions
 
     public static WebApplication ConfigureMiddleware(this WebApplication app)
     {
+        app.UseMiddleware<GlobalExceptionMiddleware>();
+
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();

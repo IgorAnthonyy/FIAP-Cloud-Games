@@ -20,11 +20,28 @@ public class User : BaseEntity
 
     public bool Situation { get; set; }
 
-    // Relacionamento
-    public ICollection<Role> Roles { get; set; } = new List<Role>();
+    public ICollection<Role> Roles { get; set; } = [];
+
+    public void CreateUser(User user, Role role)
+    {
+        base.CreateBaseEntity();
+
+        Name = user.Name;
+        Email = user.Email;
+        Password = user.Password;
+        Phone = user.Phone;
+        BirthDate = user.BirthDate;
+        Cpf = user.Cpf;
+        Situation = true;
+
+        AddRole(role);
+    }
 
     public void AddRole(Role role)
     {
+        role.CreateBaseEntity();
+
+        role.UserId = Id;
         Roles.Add(role);
     }
 }

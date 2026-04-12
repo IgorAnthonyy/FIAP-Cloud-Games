@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace FCG.Application.Interfaces;
 
-namespace FCG.Application.Interfaces
+public interface IPasswordHashService
 {
-   
-    public interface IPasswordHashService
-    {
-        string GenerateHash(string password);
-        bool VerifyPassword(string hash, string password);
-    }
+    string GenerateHash(string password);
+    bool VerifyPassword(string hash, string password);
 }
