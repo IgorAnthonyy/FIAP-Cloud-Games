@@ -6,6 +6,8 @@ using FCG.Application.Services;
 using FCG.Application.Validator;
 using FCG.Domain.Entities;
 using FCG.Domain.Interfaces;
+using FCG.Domain.Interfaces.IService;
+using FCG.Domain.Services;
 using FCG.Infrastructure.Data;
 using FCG.Infrastructure.Email.Service;
 using FCG.Infrastructure.Helper;
@@ -51,7 +53,7 @@ public static class ProgramExtensions
         // services.AddScoped<IUserApplicationService, UserApplicationService>();
         // Injeção de dependência para a camada de application
         services.AddScoped<IValidator<UserDTO>, UserValidator>();
-        services.AddScoped<IPasswordHashService, PasswordHashService>();
+        
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IEmailService, EmailService>();
         var loggerFactory = LoggerFactory.Create(builder =>
@@ -76,7 +78,8 @@ public static class ProgramExtensions
     {
         // services.AddScoped<IUserService, UserService>();
         // Injeção de dependência para a camada de domain
-
+        services.AddScoped<IPasswordHashService, PasswordHashService>();
+        services.AddScoped<IUserDomainService, UserDomainService>();
         return services;
     }
 

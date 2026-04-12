@@ -13,6 +13,6 @@ namespace FCG.Application.Interfaces
     }
     public interface IEmailService
     {
-        Task<bool> EnviarEmail(UserViewModel user, string passoword = null, EmailOptions option = EmailOptions.Padrao);
+        Task<bool> SendAsync(UserViewModel user, string passoword = null, EmailOptions option = EmailOptions.Padrao);
     }
 }

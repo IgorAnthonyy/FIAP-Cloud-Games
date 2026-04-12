@@ -9,6 +9,6 @@ namespace FCG.Application.Interfaces
 {
     public interface IUserService
     {
-        Task<UserViewModel> CriarUsuario(UserDTO user);
+        Task<UserViewModel> CreateUser(UserDTO user);
     }
 }

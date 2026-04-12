@@ -23,7 +23,7 @@ namespace FCG.Tests.Entities
             var user = _userFixture.GenerateUserWithRoleEmpty();
 
             //Act
-            user.AdicionarRole(new Role
+            user.AddRole(new Role
             {
                 Name = "Admin",
 

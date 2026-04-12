@@ -37,7 +37,7 @@ namespace FCG.Infrastructure.Email.Service
 
             return template(data);
         }
-        public async Task<bool> EnviarEmail(UserViewModel user, string password = null, EmailOptions option = EmailOptions.Padrao)
+        public async Task<bool> SendAsync(UserViewModel user, string password = null, EmailOptions option = EmailOptions.Padrao)
         {
             var mail = new MailMessage();
             mail.From = new MailAddress(_settings.User);

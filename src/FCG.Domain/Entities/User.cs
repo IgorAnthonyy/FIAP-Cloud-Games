@@ -22,7 +22,7 @@ public class User : BaseEntity
     // Relacionamento
     public ICollection<Role> Roles { get; set; } = new List<Role>();
 
-    public void AdicionarRole(Role role)
+    public void AddRole(Role role)
     {
         Roles.Add(role);
     }

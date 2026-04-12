@@ -32,7 +32,7 @@ namespace FCG.Tests.Infra.Email
             var emailService = new EmailService(settings, mockEnv.Object);
 
             //Act
-            bool send = await emailService.EnviarEmail(new Application.ViewModels.UserViewModel
+            bool send = await emailService.SendAsync(new Application.ViewModels.UserViewModel
             {
                 Email = "kingolo0102@gmail.com",
                 Name = "test"

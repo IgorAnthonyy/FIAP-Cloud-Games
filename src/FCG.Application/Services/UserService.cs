@@ -4,6 +4,7 @@ using FCG.Application.Interfaces;
 using FCG.Application.ViewModels;
 using FCG.Domain.Entities;
 using FCG.Domain.Interfaces;
+using FCG.Domain.Interfaces.IService;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -14,59 +15,34 @@ namespace FCG.Application.Services
 {
     public class UserService : BaseApplicationService, IUserService
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IRoleRepository _roleRepository;
-        private readonly IPasswordHashService _passwordHashService;
         private readonly IValidator<UserDTO> _validator;
         private readonly IEmailService _emailService;
+        private readonly IUserDomainService _userDomainService;
         private readonly IMapper _mapper;
         public UserService(IUnitOfWork unitOfWork, 
-            IPasswordHashService passwordHashService, 
-            IUserRepository userRepository, IValidator<UserDTO> validator, 
-            IMapper mapper, 
-            IRoleRepository roleRepository, IEmailService emailService) : base(unitOfWork)
+            IValidator<UserDTO> validator, 
+            IMapper mapper,  
+            IEmailService emailService,
+            IUserDomainService userDomainService) : base(unitOfWork)
         {
-            _userRepository = userRepository;
             _validator = validator;
             _mapper = mapper;
-            _roleRepository = roleRepository;
-            _passwordHashService = passwordHashService;
             _emailService = emailService;
+            _userDomainService = userDomainService;
         }
 
-        public async Task<UserViewModel> CriarUsuario(UserDTO user)
-        {
-            var userView = await CriarUsuario(user, "PADRAO");
-            //Envia Email aqui de boas vindas
-            await _emailService.EnviarEmail(userView);
-            return userView;
-        }
-
-        private async Task<UserViewModel> CriarUsuario(UserDTO user, string role)
+        public async Task<UserViewModel> CreateUser(UserDTO user)
         {
             var validation = await _validator.ValidateAsync(user);
             if (!validation.IsValid) throw new ApplicationException("Erro na validação");
-            var userSearch = await _userRepository.GetByEmail(user.Email);
-
-            if (userSearch != null) throw new ApplicationException("Usuário encontrado");
-
-            User userMapper = _mapper.Map<User>(user);
-
-            userMapper.AdicionarRole(new Role
-            {
-                Name = role,
-            });
-            userMapper.Password = _passwordHashService.GenerateHash(userMapper.Password);
-            userMapper.Situation = true;
-            User insertedUser = await _userRepository.Insert(userMapper);
-
-            await UnitOfWork.CommitAsync();
-
+            var insertedUser = await _userDomainService.CreateUser(_mapper.Map<User>(user), "PADRAO");
             UserViewModel userView = _mapper.Map<UserViewModel>(insertedUser);
 
+            await _emailService.SendAsync(userView);
+
             return userView;
-
-
         }
+
+       
     }
 }

@@ -16,11 +16,11 @@ namespace FCG.Api.Controllers
             _userService = userService;
         }
         [HttpPost]
-        public async Task<IActionResult> CriarUsuario([FromBody] UserDTO user)
+        public async Task<IActionResult> CreateUser([FromBody] UserDTO user)
         {
             try
             {
-                var userCreated = await _userService.CriarUsuario(user);
+                var userCreated = await _userService.CreateUser(user);
                 return StatusCode(StatusCodes.Status201Created, userCreated);
             }
             catch (System.Exception e)
