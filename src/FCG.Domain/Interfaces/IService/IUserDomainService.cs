@@ -1,13 +1,9 @@
 ﻿using FCG.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace FCG.Domain.Interfaces.IService
+namespace FCG.Domain.Interfaces.IService;
+
+public interface IUserDomainService
 {
-    public interface IUserDomainService
-    {
-        Task<User> CreateUser(User user, string role);
-    }
+    Task<User> CreateUser(User user, string role);
 }
