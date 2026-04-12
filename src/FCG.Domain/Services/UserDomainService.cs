@@ -1,8 +1,8 @@
 ﻿using FCG.Application.Interfaces;
 using FCG.Domain.Entities;
+using FCG.Domain.Exceptions;
 using FCG.Domain.Interfaces;
-using FCG.Domain.Interfaces.IService;
-using System;
+using FCG.Domain.ValueObjects;
 using System.Threading.Tasks;
 
 namespace FCG.Domain.Services;
@@ -18,16 +18,18 @@ public class UserDomainService : IUserDomainService
         _passwordHashService = passwordHashService;
     }
 
+
     public async Task<User> CreateUser(User user, string role)
     {
-        var userSearch = await _userRepository.GetByEmail(user.Email);
-        if (userSearch != null)
-            throw new Exception("Usuário encontrado");
+        var userSearch = await _userRepository.GetByEmail(user.Email.Value);
+
+        if (userSearch != null) throw new BusinessException("Usuário encontrado");
+
+        var password = new Password(user.Password);
 
         user.CreateUser(user, new Role(role));
-
-        user.Password = _passwordHashService.GenerateHash(user.Password);
-        var insertedUser = await _userRepository.Insert(user);
+        user.Password = _passwordHashService.GenerateHash(password.Value);
+        User insertedUser = await _userRepository.Insert(user);
 
         return insertedUser;
     }

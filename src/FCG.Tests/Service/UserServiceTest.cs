@@ -6,41 +6,41 @@ using FCG.Application.ViewModels;
 using FCG.Domain.Entities;
 using FCG.Domain.Interfaces;
 using FCG.Domain.Services;
-using FCG.Tests.Fixture;
+using FCG.Domain.ValueObjects;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
-using FCG.Exception.Exceptions;
+using FCG.Domain.Exceptions;
 
 namespace FCG.Tests.Service;
 
 public class UserServiceTest
 {
-
-    private User GetUser(string email)
-    {
-        return new User
+        private User GetUser(string email)
         {
-            CpfNumber = "00000000",
-            BirthDate = DateTime.Now,
-            Email = email,
-            Name = "name",
-            Password = "asdasdasdasdasdadasdasd",
-            Phone = "1234567890"
-        };
-    }
-    [Fact]
-    public async Task UserEntity_Should_AddedInDb()
-    {
-        //Arrange
-        User usuarioASerCriado = GetUser("teste@email.com");
-        var uowMock = new Mock<IUnitOfWork>();
-        var emailMock = new Mock<IEmailService>();
-        var passwordServiceMock = new Mock<IPasswordHashService>();
-        var userRepositoryMock = new Mock<IUserRepository>();
-        var roleRepositoryMock = new Mock<IRoleRepository>();
-        var mapperMock = new Mock<IMapper>();
-        var validatorMock = new Mock<IValidator<UserDTO>>();
+            return new User
+            {
+                Cpf = new CPF("51619938049"),
+                BirthDate = DateTime.Now,
+                Email = new Email("teste@teste.com"),
+                Name = "name",
+                Password = "123@T1password",
+                Phone = "1234567890"
+            };
+        }
+
+        [Fact]
+        public async Task UserEntity_Should_AddedInDb()
+        {
+            //Arrange
+            User usuarioASerCriado = GetUser("teste@email.com");
+            var uowMock = new Mock<IUnitOfWork>();
+            var emailMock = new Mock<IEmailService>();
+            var passwordServiceMock = new Mock<IPasswordHashService>();
+            var userRepositoryMock = new Mock<IUserRepository>();
+            var roleRepositoryMock = new Mock<IRoleRepository>();
+            var mapperMock = new Mock<IMapper>();
+            var validatorMock = new Mock<IValidator<UserDTO>>();
 
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(null as User);
@@ -66,15 +66,15 @@ public class UserServiceTest
         var userService = new UserService(uowMock.Object, validatorMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
 
 
-        //Act
-        var userCriado = await userService.CreateUser(new UserDTO
-        {
-            CpfNumber = "00000000",
-            BirthDate = DateTime.Now,
-            Email = "teste@email.com",
-            Name = "name",
-            Password = "@T1password",
-            Phone = "1234567890"
+            //Act
+            var userCriado = await userService.CreateUser(new UserDTO
+            {
+                Cpf = "00000000",
+                BirthDate = DateTime.Now,
+                Email = "teste@email.com",
+                Name = "name",
+                Password = "123@T1password",
+                Phone = "1234567890"
 
         });
 
@@ -122,20 +122,18 @@ public class UserServiceTest
 
         var userService = new UserService(uowMock.Object, validatorMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
 
-        //Act
-        await Assert.ThrowsAsync<BusinessException>(() => userService.CreateUser(new UserDTO
-        {
-            CpfNumber = "00000000",
-            BirthDate = DateTime.Now,
-            Email = "teste",
-            Name = "name",
-            Password = "12345678",
-            Phone = "1234567890"
+            //Act
+            await Assert.ThrowsAsync<BusinessException>(() => userService.CreateUser(new UserDTO
+            {
+                Cpf = "00000000",
+                BirthDate = DateTime.Now,
+                Email = "teste",
+                Name = "name",
+                Password = "12345678",
+                Phone = "1234567890"
 
         }));
     }
-
-
 
     [Fact]
     public async Task UserEntity_ShouldThrow_FoundUserException()
@@ -172,15 +170,15 @@ public class UserServiceTest
 
         var userService = new UserService(uowMock.Object, validatorMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
 
-        //Act
-        await Assert.ThrowsAsync<System.Exception>(() => userService.CreateUser(new UserDTO
-        {
-            CpfNumber = "00000000",
-            BirthDate = DateTime.Now,
-            Email = "teste",
-            Name = "name",
-            Password = "12345678",
-            Phone = "1234567890"
+            //Act
+            await Assert.ThrowsAsync<BusinessException>(() => userService.CreateUser(new UserDTO
+            {
+                Cpf = "00000000",
+                BirthDate = DateTime.Now,
+                Email = "teste",
+                Name = "name",
+                Password = "12345678",
+                Phone = "1234567890"
 
         }));
     }

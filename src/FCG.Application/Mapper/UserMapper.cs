@@ -2,9 +2,7 @@
 using FCG.Application.DTOs;
 using FCG.Application.ViewModels;
 using FCG.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using FCG.Domain.ValueObjects;
 
 namespace FCG.Application.Mapper
 {
@@ -12,6 +10,8 @@ namespace FCG.Application.Mapper
     {
         public UserMapper()
         {
+            CreateMap<Email, string>().ConvertUsing(e => e.Value);
+            CreateMap<CPF, string>().ConvertUsing(e => e.Code);
             CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<User, UserViewModel>().ReverseMap();
         }

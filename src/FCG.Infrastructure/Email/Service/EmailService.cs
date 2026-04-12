@@ -1,5 +1,6 @@
 ﻿using FCG.Application.Interfaces;
 using FCG.Application.ViewModels;
+using FCG.Domain.Enums;
 using HandlebarsDotNet;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -29,33 +30,33 @@ public class EmailService : IEmailService
             $"{fileName}.hbs"
             );
 
-        var origem = await File.ReadAllTextAsync(path);
+    var origem = await File.ReadAllTextAsync(path);
 
-        var template = Handlebars.Compile(origem);
+    var template = Handlebars.Compile(origem);
 
-        return template(data);
-    }
-    public async Task<bool> SendAsync(UserViewModel user, string password = null, EmailOptions option = EmailOptions.Padrao)
+    return template(data);
+}
+public async Task<bool> SendAsync(UserViewModel user, string password = null, EmailOptions option = EmailOptions.Padrao)
+{
+    var mail = new MailMessage();
+    mail.From = new MailAddress(_settings.User);
+    mail.To.Add(user.Email);
+    mail.Subject = "Bem vindo(a) ao sistema FCG";
+    mail.IsBodyHtml = true;
+    mail.Body = await PegarTemplate("email", new
     {
-        var mail = new MailMessage();
-        mail.From = new MailAddress(_settings.User);
-        mail.To.Add(user.Email);
-        mail.Subject = "Bem vindo(a) ao sistema FCG";
-        mail.IsBodyHtml = true;
-        mail.Body = await PegarTemplate("email", new
-        {
-            Name = user.Name,
-            Body = option == EmailOptions.Padrao ? "Bem vindo ao sistema que fará você se aventurar em diversas jornadas e ser o verdadeiro gamer"
-            :
-            $@"Bem vindo ao sistema que fará você se aventurar em diversas jornadas e ser o verdadeiro gamer, mas antes disso entre na sua conta com essa senha: {password}"
-        });
-        var smtp = new SmtpClient(_settings.Host)
-        {
-            Port = _settings.Port,
-            Credentials = new NetworkCredential(_settings.User, _settings.Password),
-            EnableSsl = true,
-        };
-        await smtp.SendMailAsync(mail);
-        return true;
-    }
+        Name = user.Name,
+        Body = option == EmailOptions.Padrao ? "Bem vindo ao sistema que fará você se aventurar em diversas jornadas e ser o verdadeiro gamer"
+        :
+        $@"Bem vindo ao sistema que fará você se aventurar em diversas jornadas e ser o verdadeiro gamer, mas antes disso entre na sua conta com essa senha: {password}"
+    });
+    var smtp = new SmtpClient(_settings.Host)
+    {
+        Port = _settings.Port,
+        Credentials = new NetworkCredential(_settings.User, _settings.Password),
+        EnableSsl = true,
+    };
+    await smtp.SendMailAsync(mail);
+    return true;
+}
 }

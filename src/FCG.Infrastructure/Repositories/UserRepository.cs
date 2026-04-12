@@ -5,6 +5,7 @@ using FCG.Domain.Entities;
 using FCG.Domain.Interfaces;
 using FCG.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using VO = FCG.Domain.ValueObjects;
 
 namespace FCG.Infrastructure.Repositories;
 
@@ -21,7 +22,7 @@ public class UserRepository(ApplicationDbContext context) : BaseRepository<User>
     {
         return await BaseQuery()
             .Include(x => x.Roles)
-            .FirstOrDefaultAsync(x => x.Email == email);
+            .FirstOrDefaultAsync(x => x.Email == new VO.Email(email));
     }
 
     public async Task<IEnumerable<User>> GetAll()

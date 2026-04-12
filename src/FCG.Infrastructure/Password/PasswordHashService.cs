@@ -1,22 +1,22 @@
 ﻿using FCG.Application.Interfaces;
 using FCG.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
+using System;
+using System.Collections.Generic;
 using System.Text;
 
-namespace FCG.Infrastructure.Password;
-
-public class PasswordHashService : IPasswordHashService
+namespace FCG.Infrastructure.PasswordHelper
 {
-    private readonly PasswordHasher<object> _hash = new();
-    
-    public string GenerateHash(string password)
+    public class PasswordHashService : IPasswordHashService
     {
-        return _hash.HashPassword(null, password);
-    }
+        public string GenerateHash(string password)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(password);
+        }
 
-    public bool VerifyPassword(string hash, string password)
-    {
-        var result = _hash.VerifyHashedPassword(null, hash, password);
-        return result == PasswordVerificationResult.Success;
+        public bool VerifyPassword(string hash, string password)
+        {
+            var result = BCrypt.Net.BCrypt.Verify(password, hash);
+            return result;
+        }
     }
 }

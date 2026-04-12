@@ -1,4 +1,5 @@
 ﻿using FCG.Domain.Entities;
+using FCG.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,9 +14,25 @@ public class UserMap : IEntityTypeConfiguration<User>
         builder.HasKey(u => u.Id);
 
         builder.Property(u => u.Name).IsRequired().HasMaxLength(150);
-        builder.Property(u => u.Email).IsRequired().HasMaxLength(150);
+
+        builder.Property(u => u.Email)
+       .HasConversion(
+           email => email.Value,
+           value => new Domain.ValueObjects.Email(value)
+       )
+       .HasColumnName("Email")
+       .IsRequired();
+
         builder.Property(u => u.Password).IsRequired();
-        builder.Property(u => u.CpfNumber).HasMaxLength(11);
+
+        builder.Property(u => u.Cpf)
+        .HasConversion(
+            cpf => cpf.Code,
+            value => new CPF(value)
+        )
+        .HasColumnName("CpfNumber")
+        .HasMaxLength(11);
+
         builder.Property(u => u.Phone).HasMaxLength(20);
         builder.Property(u => u.BirthDate).IsRequired();
         builder.Property(u => u.Situation).IsRequired();

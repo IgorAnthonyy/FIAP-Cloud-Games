@@ -1,5 +1,4 @@
 ﻿using FCG.Application.DTOs;
-using FCG.Domain.Entities;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
