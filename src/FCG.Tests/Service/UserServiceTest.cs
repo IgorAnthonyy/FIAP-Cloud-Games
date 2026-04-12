@@ -6,6 +6,7 @@ using FCG.Application.ViewModels;
 using FCG.Domain.Entities;
 using FCG.Domain.Interfaces;
 using FCG.Domain.Services;
+using FCG.Domain.ValueObjects;
 using FCG.Tests.Fixture;
 using FluentValidation;
 using FluentValidation.Results;
@@ -23,11 +24,11 @@ namespace FCG.Tests.Service
         {
             return new User
             {
-                CpfNumber = "00000000",
+                Cpf = new CPF("51619938049"),
                 BirthDate = DateTime.Now,
-                Email = email,
+                Email = new Email("teste@teste.com"),
                 Name = "name",
-                Password = "asdasdasdasdasdadasdasd",
+                Password = "123@T1password",
                 Phone = "1234567890"
             };
         }
@@ -71,11 +72,11 @@ namespace FCG.Tests.Service
             //Act
             var userCriado = await userService.CreateUser(new UserDTO
             {
-                CpfNumber = "00000000",
+                Cpf = "00000000",
                 BirthDate = DateTime.Now,
                 Email = "teste@email.com",
                 Name = "name",
-                Password = "@T1password",
+                Password = "123@T1password",
                 Phone = "1234567890"
 
             });
@@ -127,7 +128,7 @@ namespace FCG.Tests.Service
             //Act
             await Assert.ThrowsAsync<ApplicationException>(() => userService.CreateUser(new UserDTO
             {
-                CpfNumber = "00000000",
+                Cpf = "00000000",
                 BirthDate = DateTime.Now,
                 Email = "teste",
                 Name = "name",
@@ -177,7 +178,7 @@ namespace FCG.Tests.Service
             //Act
             await Assert.ThrowsAsync<ApplicationException>(() => userService.CreateUser(new UserDTO
             {
-                CpfNumber = "00000000",
+                Cpf = "00000000",
                 BirthDate = DateTime.Now,
                 Email = "teste",
                 Name = "name",

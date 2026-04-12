@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FCG.Infrastructure.Email.Service
+namespace FCG.Infrastructure.EmailHelper.Service
 {
     public class EmailSettings
     {

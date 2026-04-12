@@ -2,6 +2,7 @@
 using FCG.Domain.Entities;
 using FCG.Domain.Interfaces;
 using FCG.Domain.Interfaces.IService;
+using FCG.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,22 +26,32 @@ namespace FCG.Domain.Services
 
         public async Task<User> CreateUser(User user, string role)
         {
-
-            var userSearch = await _userRepository.GetByEmail(user.Email);
-
-            if (userSearch != null) throw new ApplicationException("Usuário encontrado");
-
-            user.AddRole(new Role
+            try
             {
-                Name = role,
-            });
-            user.Password = _passwordHashService.GenerateHash(user.Password);
-            user.Situation = true;
-            User insertedUser = await _userRepository.Insert(user);
+                var userSearch = await _userRepository.GetByEmail(user.Email.Value);
 
-            await UnitOfWork.CommitAsync();
+                if (userSearch != null) throw new ApplicationException("Usuário encontrado");
 
-            return insertedUser;
+                user.AddRole(new Role
+                {
+                    Name = role,
+                });
+                var password = new Password(user.Password);
+                user.Password = _passwordHashService.GenerateHash(password.Value);
+                user.Situation = true;
+                User insertedUser = await _userRepository.Insert(user);
+
+                await UnitOfWork.CommitAsync();
+
+                return insertedUser;
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+
+            
 
 
         }

@@ -1,5 +1,5 @@
 ﻿using FCG.Domain.Entities;
-using FCG.Infrastructure.Email.Service;
+using FCG.Infrastructure.EmailHelper.Service;
 using FCG.Tests.Fixture;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;

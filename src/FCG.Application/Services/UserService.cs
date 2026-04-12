@@ -35,7 +35,8 @@ namespace FCG.Application.Services
         {
             var validation = await _validator.ValidateAsync(user);
             if (!validation.IsValid) throw new ApplicationException("Erro na validação");
-            var insertedUser = await _userDomainService.CreateUser(_mapper.Map<User>(user), "PADRAO");
+            var userMapped = _mapper.Map<User>(user);
+            var insertedUser = await _userDomainService.CreateUser(userMapped, "PADRAO");
             UserViewModel userView = _mapper.Map<UserViewModel>(insertedUser);
 
             await _emailService.SendAsync(userView);

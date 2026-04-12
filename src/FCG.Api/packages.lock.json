@@ -37,6 +37,11 @@
           "Microsoft.IdentityModel.JsonWebTokens": "8.14.0"
         }
       },
+      "BCrypt.Net-Next": {
+        "type": "Transitive",
+        "resolved": "4.1.0",
+        "contentHash": "5YT3DKllmtkyW68PjURu/V1TOe4MKiByKwsRNVcfYE1S5KuFTeozdmKzyNzolKiQF391OXCaQtINvYT3j1ERzQ=="
+      },
       "FluentValidation": {
         "type": "Transitive",
         "resolved": "12.1.1",
@@ -51,11 +56,6 @@
         "type": "Transitive",
         "resolved": "2.14.1",
         "contentHash": "lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw=="
-      },
-      "Microsoft.AspNet.Identity.Core": {
-        "type": "Transitive",
-        "resolved": "2.2.4",
-        "contentHash": "s3u/o3iG5h0z7Ggukwo4soPwogD56ZrYbolGxTfw41zkuG6jAXUJT/V3EThqHJXGuCNvWSdSnnwAhPfT9Sn36g=="
       },
       "Microsoft.Build.Framework": {
         "type": "Transitive",
@@ -337,11 +337,11 @@
       "fcg.infrastructure": {
         "type": "Project",
         "dependencies": {
+          "BCrypt.Net-Next": "[4.1.0, )",
           "FCG.Application": "[1.0.0, )",
           "FCG.Domain": "[1.0.0, )",
           "FCG.Exception": "[1.0.0, )",
           "Handlebars.Net": "[2.1.6, )",
-          "Microsoft.AspNet.Identity.Core": "[2.2.4, )",
           "Microsoft.EntityFrameworkCore": "[10.0.5, )",
           "Microsoft.EntityFrameworkCore.Design": "[10.0.5, )",
           "Microsoft.EntityFrameworkCore.Tools": "[10.0.5, )",

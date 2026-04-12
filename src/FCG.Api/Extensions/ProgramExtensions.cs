@@ -9,7 +9,7 @@ using FCG.Domain.Interfaces;
 using FCG.Domain.Interfaces.IService;
 using FCG.Domain.Services;
 using FCG.Infrastructure.Data;
-using FCG.Infrastructure.Email.Service;
+using FCG.Infrastructure.EmailHelper.Service;
 using FCG.Infrastructure.Helper;
 using FCG.Infrastructure.Persistence;
 using FCG.Infrastructure.Repositories;

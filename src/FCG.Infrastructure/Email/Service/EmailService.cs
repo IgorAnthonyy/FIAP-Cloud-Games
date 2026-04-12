@@ -11,7 +11,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FCG.Infrastructure.Email.Service
+namespace FCG.Infrastructure.EmailHelper.Service
 {
     public class EmailService : IEmailService
     {

@@ -13,5 +13,5 @@ public class UserDTO
 
     public DateTime BirthDate { get; set; }
 
-    public string CpfNumber { get; set; }
+    public string Cpf { get; set; }
 }
