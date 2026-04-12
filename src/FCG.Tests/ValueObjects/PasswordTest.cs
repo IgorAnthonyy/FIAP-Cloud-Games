@@ -1,32 +1,28 @@
 ﻿using FCG.Domain.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace FCG.Tests.ValueObjects
+namespace FCG.Tests.ValueObjects;
+
+public class PasswordTest
 {
-    public class PasswordTest
+    [Fact]
+    public void PasswordValue_Valid()
     {
-        [Fact]
-        public void PasswordValue_Valid()
-        {
 
-            var password = new Password("!@Aedefsd1234");
-            Assert.Equal("!@Aedefsd1234", password.Value);
-        }
+        var password = new Password("!@Aedefsd1234");
+        Assert.Equal("!@Aedefsd1234", password.Value);
+    }
 
-        [Fact]
-        public void PasswordValue_InvalidLength()
-        {
+    [Fact]
+    public void PasswordValue_InvalidLength()
+    {
 
-            Assert.Throws<ApplicationException>(() => new Password("!@Aede1"));
-        }
+        Assert.Throws<ApplicationException>(() => new Password("!@Aede1"));
+    }
 
-        [Fact]
-        public void PasswordValue_InvalidDigits()
-        {
+    [Fact]
+    public void PasswordValue_InvalidDigits()
+    {
 
-            Assert.Throws<ApplicationException>(() => new Password("asdasdasdasd"));
-        }
+        Assert.Throws<ApplicationException>(() => new Password("asdasdasdasd"));
     }
 }

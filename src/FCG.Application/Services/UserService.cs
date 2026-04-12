@@ -4,9 +4,8 @@ using FCG.Application.Interfaces;
 using FCG.Application.ViewModels;
 using FCG.Domain.Contants;
 using FCG.Domain.Entities;
+using FCG.Domain.Exceptions;
 using FCG.Domain.Interfaces;
-using FCG.Domain.Interfaces.IService;
-using FCG.FCGException.Exceptions;
 using FluentValidation;
 using System;
 using System.Threading.Tasks;
@@ -35,9 +34,11 @@ public class UserService : BaseApplicationService, IUserService
         {
             var validation = await _validator.ValidateAsync(user);
             if (!validation.IsValid) throw new BusinessException("Erro na validação");
+
             var userMapped = _mapper.Map<User>(user);
             var insertedUser = await _userDomainService.CreateUser(userMapped, FCGConstant.UserDefault);
             await UnitOfWork.CommitAsync();
+            
             UserViewModel userView = _mapper.Map<UserViewModel>(insertedUser);
 
             await _emailService.SendAsync(userView);

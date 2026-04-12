@@ -1,34 +1,28 @@
-﻿using FCG.Domain.Entities;
-using FCG.Domain.ValueObjects;
-using FCG.Tests.Fixture;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using FCG.Domain.ValueObjects;
 
-namespace FCG.Tests.ValueObjects
+namespace FCG.Tests.ValueObjects;
+
+public class CPFTest
 {
-    public class CPFTest
+    [Fact]
+    public void CPFValue_Valid()
     {
-        [Fact]
-        public void CPFValue_Valid()
-        {
-            
-            var cpf = new CPF("06515537506");
-            Assert.Equal("06515537506", cpf.Code);
-        }
 
-        [Fact]
-        public void CPFValue_InvalidLength()
-        {
+        var cpf = new CPF("06515537506");
+        Assert.Equal("06515537506", cpf.Code);
+    }
 
-            Assert.Throws<ApplicationException>(() => new CPF("0651553750"));
-        }
+    [Fact]
+    public void CPFValue_InvalidLength()
+    {
 
-        [Fact]
-        public void CPFValue_InvalidDigits()
-        {
+        Assert.Throws<ApplicationException>(() => new CPF("0651553750"));
+    }
 
-            Assert.Throws<ApplicationException>(() => new CPF("06515537507"));
-        }
+    [Fact]
+    public void CPFValue_InvalidDigits()
+    {
+
+        Assert.Throws<ApplicationException>(() => new CPF("06515537507"));
     }
 }

@@ -1,5 +1,6 @@
 ﻿using FCG.Application.Interfaces;
 using FCG.Application.ViewModels;
+using FCG.Domain.Enums;
 using HandlebarsDotNet;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -9,7 +10,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
-namespace FCG.Infrastructure.EmailHelper.Service;
+namespace FCG.Infrastructure.Email.Service;
 
 public class EmailService : IEmailService
 {

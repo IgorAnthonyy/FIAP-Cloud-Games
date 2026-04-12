@@ -6,10 +6,8 @@ using FCG.Application.Services;
 using FCG.Application.Validator;
 using FCG.Domain.Entities;
 using FCG.Domain.Interfaces;
-using FCG.Domain.Interfaces.IService;
 using FCG.Domain.Services;
 using FCG.Infrastructure.Data;
-using FCG.Infrastructure.EmailHelper.Service;
 using FCG.Infrastructure.PasswordHelper;
 using FCG.Infrastructure.Persistence;
 using FCG.Infrastructure.Repositories;
@@ -23,6 +21,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi;
+using FCG.Infrastructure.Email.Service;
 
 namespace FCG.Api.Extensions;
 
@@ -89,8 +88,7 @@ public static class ProgramExtensions
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
-        services.Configure<EmailSettings>(
-        configuration.GetSection("Email"));
+
         return services;
     }
 
@@ -117,6 +115,7 @@ public static class ProgramExtensions
     public static IServiceCollection ConfigureSettings(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<FCGSettings>(configuration);
+        services.Configure<EmailSettings>(configuration.GetSection("Email"));
 
         return services;
     }

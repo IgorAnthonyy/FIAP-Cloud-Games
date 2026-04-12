@@ -7,17 +7,15 @@ using FCG.Domain.Entities;
 using FCG.Domain.Interfaces;
 using FCG.Domain.Services;
 using FCG.Domain.ValueObjects;
-using FCG.Tests.Fixture;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
-using FCG.FCGException.Exceptions;
+using FCG.Domain.Exceptions;
 
 namespace FCG.Tests.Service;
 
 public class UserServiceTest
 {
-
         private User GetUser(string email)
         {
             return new User
@@ -30,6 +28,7 @@ public class UserServiceTest
                 Phone = "1234567890"
             };
         }
+
         [Fact]
         public async Task UserEntity_Should_AddedInDb()
         {
@@ -136,8 +135,6 @@ public class UserServiceTest
         }));
     }
 
-
-
     [Fact]
     public async Task UserEntity_ShouldThrow_FoundUserException()
     {
@@ -174,7 +171,7 @@ public class UserServiceTest
         var userService = new UserService(uowMock.Object, validatorMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
 
             //Act
-            await Assert.ThrowsAsync<Exception>(() => userService.CreateUser(new UserDTO
+            await Assert.ThrowsAsync<BusinessException>(() => userService.CreateUser(new UserDTO
             {
                 Cpf = "00000000",
                 BirthDate = DateTime.Now,

@@ -1,6 +1,4 @@
-﻿
-
-namespace FCG.Infrastructure.EmailHelper.Service;
+﻿namespace FCG.Infrastructure.Email.Service;
 
 public class EmailSettings
 {

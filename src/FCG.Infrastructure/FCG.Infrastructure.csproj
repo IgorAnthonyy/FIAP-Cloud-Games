@@ -9,7 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\FCG.Application\FCG.Application.csproj" />
     <ProjectReference Include="..\FCG.Domain\FCG.Domain.csproj" />
-    <ProjectReference Include="..\FCG.Exception\FCG.Exception.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,7 +18,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.5" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.5" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
   </ItemGroup>
 	
