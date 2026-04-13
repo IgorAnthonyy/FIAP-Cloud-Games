@@ -1,4 +1,5 @@
 ﻿using FCG.Infrastructure.Email.Service;
+using FCG.Domain.Views;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -27,7 +28,7 @@ public class EmailTest
         var emailService = new EmailService(settings, mockEnv.Object);
 
         //Act
-        bool send = await emailService.SendAsync(new Application.ViewModels.UserViewModel
+        bool send = await emailService.SendAsync(new UserView
         {
             Email = "kingolo0102@gmail.com",
             Name = "test"

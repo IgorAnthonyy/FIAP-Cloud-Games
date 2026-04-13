@@ -6,7 +6,7 @@ using System.Text;
 
 namespace FCG.Application.Validator
 {
-    public class UserValidator : AbstractValidator<UserDTO>
+    public class UserValidator : AbstractValidator<UserCreate>
     {
         public UserValidator()
         {

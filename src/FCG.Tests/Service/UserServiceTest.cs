@@ -2,11 +2,11 @@
 using FCG.Application.DTOs;
 using FCG.Application.Interfaces;
 using FCG.Application.Services;
-using FCG.Application.ViewModels;
 using FCG.Domain.Entities;
 using FCG.Domain.Interfaces;
 using FCG.Domain.Services;
 using FCG.Domain.ValueObjects;
+using FCG.Domain.Views;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
@@ -40,20 +40,25 @@ public class UserServiceTest
             var userRepositoryMock = new Mock<IUserRepository>();
             var roleRepositoryMock = new Mock<IRoleRepository>();
             var mapperMock = new Mock<IMapper>();
-            var validatorMock = new Mock<IValidator<UserDTO>>();
+            var validatorMock = new Mock<IValidator<UserCreate>>();
 
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(null as User);
-        emailMock.Setup(e => e.SendAsync(It.IsAny<UserViewModel>())).ReturnsAsync(true);
+        emailMock.Setup(e => e.SendAsync(It.IsAny<UserView>())).ReturnsAsync(true);
         userRepositoryMock
             .Setup(r => r.Insert(It.IsAny<User>()))
             .ReturnsAsync(GetUser("teste@email.com"));
 
         validatorMock
-        .Setup(v => v.ValidateAsync(It.IsAny<UserDTO>(), It.IsAny<CancellationToken>()))
+        .Setup(v => v.ValidateAsync(It.IsAny<UserCreate>(), It.IsAny<CancellationToken>()))
         .ReturnsAsync(new FluentValidation.Results.ValidationResult());
-        mapperMock.Setup(u => u.Map<User>(It.IsAny<UserDTO>())).Returns(GetUser("teste@email.com"));
-        mapperMock.Setup(u => u.Map<UserViewModel>(It.IsAny<User>())).Returns(new UserViewModel
+        mapperMock.Setup(u => u.Map<User>(It.IsAny<UserCreate>())).Returns(GetUser("teste@email.com"));
+        mapperMock.Setup(u => u.Map<UserView>(It.IsAny<User>())).Returns(new UserView
+        {
+            Email = "teste@email.com",
+            Name = "name"
+        });
+        mapperMock.Setup(u => u.Map<UserResponse>(It.IsAny<User>())).Returns(new UserResponse
         {
             Email = "teste@email.com",
             Name = "name"
@@ -67,7 +72,7 @@ public class UserServiceTest
 
 
             //Act
-            var userCriado = await userService.CreateUser(new UserDTO
+            var userCriado = await userService.CreateUser(new UserCreate
             {
                 Cpf = "00000000",
                 BirthDate = DateTime.Now,
@@ -95,22 +100,27 @@ public class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var roleRepositoryMock = new Mock<IRoleRepository>();
         var mapperMock = new Mock<IMapper>();
-        var validatorMock = new Mock<IValidator<UserDTO>>();
+        var validatorMock = new Mock<IValidator<UserCreate>>();
         var failures = new List<ValidationFailure>
             {
                 new ValidationFailure("Password", "Senha inválida")
             };
-        emailMock.Setup(e => e.SendAsync(It.IsAny<UserViewModel>())).ReturnsAsync(true);
+        emailMock.Setup(e => e.SendAsync(It.IsAny<UserView>())).ReturnsAsync(true);
         validatorMock
-            .Setup(v => v.ValidateAsync(It.IsAny<UserDTO>(), It.IsAny<CancellationToken>()))
+            .Setup(v => v.ValidateAsync(It.IsAny<UserCreate>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult(failures));
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(null as User);
         userRepositoryMock
             .Setup(r => r.Insert(It.IsAny<User>()))
             .ReturnsAsync(GetUser("teste"));
-        mapperMock.Setup(u => u.Map<User>(It.IsAny<UserDTO>())).Returns(GetUser("teste"));
-        mapperMock.Setup(u => u.Map<UserViewModel>(It.IsAny<User>())).Returns(new UserViewModel
+        mapperMock.Setup(u => u.Map<User>(It.IsAny<UserCreate>())).Returns(GetUser("teste"));
+        mapperMock.Setup(u => u.Map<UserView>(It.IsAny<User>())).Returns(new UserView
+        {
+            Email = "teste@email.com",
+            Name = "name"
+        });
+        mapperMock.Setup(u => u.Map<UserResponse>(It.IsAny<User>())).Returns(new UserResponse
         {
             Email = "teste@email.com",
             Name = "name"
@@ -123,7 +133,7 @@ public class UserServiceTest
         var userService = new UserService(uowMock.Object, validatorMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
 
             //Act
-            await Assert.ThrowsAsync<BusinessException>(() => userService.CreateUser(new UserDTO
+            await Assert.ThrowsAsync<BusinessException>(() => userService.CreateUser(new UserCreate
             {
                 Cpf = "00000000",
                 BirthDate = DateTime.Now,
@@ -146,8 +156,8 @@ public class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var roleRepositoryMock = new Mock<IRoleRepository>();
         var mapperMock = new Mock<IMapper>();
-        var validatorMock = new Mock<IValidator<UserDTO>>();
-        emailMock.Setup(e => e.SendAsync(It.IsAny<UserViewModel>())).ReturnsAsync(true);
+        var validatorMock = new Mock<IValidator<UserCreate>>();
+        emailMock.Setup(e => e.SendAsync(It.IsAny<UserView>())).ReturnsAsync(true);
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(GetUser("teste@email.com"));
         userRepositoryMock
@@ -155,10 +165,15 @@ public class UserServiceTest
             .ReturnsAsync(GetUser("teste@email.com"));
 
         validatorMock
-        .Setup(v => v.ValidateAsync(It.IsAny<UserDTO>(), It.IsAny<CancellationToken>()))
+        .Setup(v => v.ValidateAsync(It.IsAny<UserCreate>(), It.IsAny<CancellationToken>()))
         .ReturnsAsync(new FluentValidation.Results.ValidationResult());
-        mapperMock.Setup(u => u.Map<User>(It.IsAny<UserDTO>())).Returns(GetUser("teste@email.com"));
-        mapperMock.Setup(u => u.Map<UserViewModel>(It.IsAny<User>())).Returns(new UserViewModel
+        mapperMock.Setup(u => u.Map<User>(It.IsAny<UserCreate>())).Returns(GetUser("teste@email.com"));
+        mapperMock.Setup(u => u.Map<UserView>(It.IsAny<User>())).Returns(new UserView
+        {
+            Email = "teste@email.com",
+            Name = "name"
+        });
+        mapperMock.Setup(u => u.Map<UserResponse>(It.IsAny<User>())).Returns(new UserResponse
         {
             Email = "teste@email.com",
             Name = "name"
@@ -171,7 +186,7 @@ public class UserServiceTest
         var userService = new UserService(uowMock.Object, validatorMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
 
             //Act
-            await Assert.ThrowsAsync<BusinessException>(() => userService.CreateUser(new UserDTO
+            await Assert.ThrowsAsync<BusinessException>(() => userService.CreateUser(new UserCreate
             {
                 Cpf = "00000000",
                 BirthDate = DateTime.Now,

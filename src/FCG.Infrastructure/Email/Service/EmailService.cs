@@ -1,6 +1,6 @@
-﻿using FCG.Application.Interfaces;
-using FCG.Application.ViewModels;
-using FCG.Domain.Enums;
+﻿using FCG.Domain.Enums;
+using FCG.Domain.Interfaces;
+using FCG.Domain.Views;
 using HandlebarsDotNet;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -36,7 +36,7 @@ public class EmailService : IEmailService
 
     return template(data);
 }
-public async Task<bool> SendAsync(UserViewModel user, string password = null, EmailOptions option = EmailOptions.Padrao)
+public async Task<bool> SendAsync(UserView user, string password = null, EmailOptions option = EmailOptions.Padrao)
 {
     var mail = new MailMessage();
     mail.From = new MailAddress(_settings.User);

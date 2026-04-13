@@ -50,7 +50,7 @@ public static class ProgramExtensions
 
     public static IServiceCollection ConfigureApplication(this IServiceCollection services)
     {
-        services.AddScoped<IValidator<UserDTO>, UserValidator>();
+        services.AddScoped<IValidator<UserCreate>, UserValidator>();
         
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IEmailService, EmailService>();

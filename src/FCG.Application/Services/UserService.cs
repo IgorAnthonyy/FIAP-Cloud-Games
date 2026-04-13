@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using FCG.Application.DTOs;
 using FCG.Application.Interfaces;
-using FCG.Application.ViewModels;
 using FCG.Domain.Contants;
 using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Interfaces;
+using FCG.Domain.Views;
 using FluentValidation;
 using System;
 using System.Threading.Tasks;
@@ -14,12 +14,12 @@ namespace FCG.Application.Services;
 
 public class UserService : BaseApplicationService, IUserService
 {
-    private readonly IValidator<UserDTO> _validator;
+    private readonly IValidator<UserCreate> _validator;
     private readonly IEmailService _emailService;
     private readonly IUserDomainService _userDomainService;
     private readonly IMapper _mapper;
     public UserService(IUnitOfWork unitOfWork,
-        IValidator<UserDTO> validator,
+        IValidator<UserCreate> validator,
         IMapper mapper,
         IEmailService emailService,
         IUserDomainService userDomainService) : base(unitOfWork)
@@ -30,7 +30,7 @@ public class UserService : BaseApplicationService, IUserService
         _userDomainService = userDomainService;
     }
 
-        public async Task<UserViewModel> CreateUser(UserDTO user)
+        public async Task<UserResponse> CreateUser(UserCreate user)
         {
             var validation = await _validator.ValidateAsync(user);
             if (!validation.IsValid) throw new BusinessException("Erro na validação");
@@ -39,10 +39,11 @@ public class UserService : BaseApplicationService, IUserService
             var insertedUser = await _userDomainService.CreateUser(userMapped, FCGConstant.UserDefault);
             await UnitOfWork.CommitAsync();
             
-            UserViewModel userView = _mapper.Map<UserViewModel>(insertedUser);
+            var userResponse = _mapper.Map<UserResponse>(insertedUser);
+            var userView = _mapper.Map<UserView>(insertedUser);
 
             await _emailService.SendAsync(userView);
 
-            return userView;
+            return userResponse;
         }
 }
