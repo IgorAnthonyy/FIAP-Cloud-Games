@@ -6,6 +6,7 @@ using FCG.Domain.Entities;
 using FCG.Domain.Interfaces;
 using FCG.Domain.Interfaces.Respositories;
 using FCG.Domain.Views;
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -86,5 +87,10 @@ public class UserService : BaseApplicationService, IUserService
         }
 
         return new string(chars.ToArray());
+    }
+
+    public async Task<bool> DeleteUser(string value, string v)
+    {
+        throw new NotImplementedException();
     }
 }
