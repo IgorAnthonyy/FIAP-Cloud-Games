@@ -1,8 +1,8 @@
 ﻿using FCG.Domain.Enums;
 using FCG.Domain.Interfaces;
 using FCG.Domain.Views;
+using FCG.Infrastructure.Settings;
 using HandlebarsDotNet;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using System;
 using System.IO;
@@ -15,11 +15,10 @@ namespace FCG.Infrastructure.Email.Service;
 public class EmailService : IEmailService
 {
     private readonly EmailSettings _settings;
-    private readonly IHostEnvironment _env;
-    public EmailService(IOptions<EmailSettings> options, IHostEnvironment env)
+
+    public EmailService(IOptions<FCGSettings> options)
     {
-        _settings = options.Value;
-        _env = env;
+        _settings = options.Value.EmailSettings;
     }
 
     private static async Task<string> GetTemplate(string fileName, object data)

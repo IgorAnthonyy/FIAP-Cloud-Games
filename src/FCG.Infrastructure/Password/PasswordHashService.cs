@@ -1,22 +1,17 @@
 ﻿using FCG.Application.Interfaces;
-using FCG.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace FCG.Infrastructure.PasswordHelper
+namespace FCG.Infrastructure.Password;
+
+public class PasswordHashService : IPasswordHashService
 {
-    public class PasswordHashService : IPasswordHashService
+    public string GenerateHash(string password)
     {
-        public string GenerateHash(string password)
-        {
-            return BCrypt.Net.BCrypt.HashPassword(password);
-        }
+        return BCrypt.Net.BCrypt.HashPassword(password);
+    }
 
-        public bool VerifyPassword(string hash, string password)
-        {
-            var result = BCrypt.Net.BCrypt.Verify(password, hash);
-            return result;
-        }
+    public bool VerifyPassword(string hash, string password)
+    {
+        var result = BCrypt.Net.BCrypt.Verify(password, hash);
+        return result;
     }
 }

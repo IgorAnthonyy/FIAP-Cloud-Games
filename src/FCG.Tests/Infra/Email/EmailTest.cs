@@ -1,8 +1,7 @@
 ﻿using FCG.Infrastructure.Email.Service;
 using FCG.Domain.Views;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Moq;
+using FCG.Infrastructure.Settings;
 
 namespace FCG.Tests.Infra.Email;
 
@@ -11,21 +10,19 @@ public class EmailTest
     [Fact]
     public async Task EmailService_Should_EmailPadrao()
     {
-
-        var mockEnv = new Mock<IHostEnvironment>();
-
-        mockEnv.Setup(e => e.ContentRootPath)
-               .Returns(Directory.GetCurrentDirectory());
-        var settings = Options.Create(new EmailSettings
+        var settings = Options.Create(new FCGSettings
         {
-            Host = "smtp.gmail.com",
-            Port = 587,
-            User = "grupofiap77@gmail.com",
-            Password = "jleh ckhf zqjt vgho"
+            EmailSettings = new EmailSettings
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                User = "grupofiap77@gmail.com",
+                Password = "jleh ckhf zqjt vgho"
+            }
         });
-
+    
         //Arrange
-        var emailService = new EmailService(settings, mockEnv.Object);
+        var emailService = new EmailService(settings);
 
         //Act
         bool send = await emailService.SendAsync(new UserView
