@@ -2,6 +2,7 @@
 using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Interfaces;
+using FCG.Domain.Interfaces.Respositories;
 using FCG.Domain.ValueObjects;
 using System.Threading.Tasks;
 
@@ -17,7 +18,6 @@ public class UserDomainService : IUserDomainService
         _userRepository = userRepository;
         _passwordHashService = passwordHashService;
     }
-
 
     public async Task<User> CreateUser(User user, string role)
     {

@@ -6,5 +6,5 @@ namespace FCG.Domain.Interfaces;
 
 public interface IEmailService
 {
-    Task<bool> SendAsync(UserView user, string passoword = null, EmailOptions option = EmailOptions.Padrao);
+    Task<bool> SendAsync(UserView user, string password = null, EmailOptions option = EmailOptions.Padrao);
 }

@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using FCG.Domain.Interfaces;
+using FCG.Domain.Interfaces.Respositories;
 using FCG.Infrastructure.Data;
 
 namespace FCG.Infrastructure.Persistence;

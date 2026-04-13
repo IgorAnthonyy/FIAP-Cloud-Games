@@ -1,11 +1,10 @@
 ﻿using FCG.Application.DTOs;
-using FCG.Domain.Views;
 using System.Threading.Tasks;
 
-namespace FCG.Application.Interfaces
+namespace FCG.Application.Interfaces;
+
+public interface IUserService
 {
-    public interface IUserService
-    {
-        Task<UserResponse> CreateUser(UserCreate user);
-    }
+    Task<UserResponse> CreateUser(UserCreate user);
+    Task<UserResponse> CreateAdmin(AdminCreate user);
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FCG.Domain.Entities;
-using FCG.Domain.Interfaces;
+using FCG.Domain.Interfaces.Respositories;
 using FCG.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

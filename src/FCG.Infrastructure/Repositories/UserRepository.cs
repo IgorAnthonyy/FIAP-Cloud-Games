@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FCG.Domain.Entities;
-using FCG.Domain.Interfaces;
+using FCG.Domain.Interfaces.Respositories;
 using FCG.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using VO = FCG.Domain.ValueObjects;

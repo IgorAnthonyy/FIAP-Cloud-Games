@@ -7,10 +7,10 @@ using FCG.Domain.Interfaces;
 using FCG.Domain.Services;
 using FCG.Domain.ValueObjects;
 using FCG.Domain.Views;
-using FluentValidation;
-using FluentValidation.Results;
 using Moq;
 using FCG.Domain.Exceptions;
+using FCG.Domain.Enums;
+using FCG.Domain.Interfaces.Respositories;
 
 namespace FCG.Tests.Service;
 
@@ -40,7 +40,6 @@ public class UserServiceTest
             var userRepositoryMock = new Mock<IUserRepository>();
             var roleRepositoryMock = new Mock<IRoleRepository>();
             var mapperMock = new Mock<IMapper>();
-            var validatorMock = new Mock<IValidator<UserCreate>>();
 
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(null as User);
@@ -49,9 +48,6 @@ public class UserServiceTest
             .Setup(r => r.Insert(It.IsAny<User>()))
             .ReturnsAsync(GetUser("teste@email.com"));
 
-        validatorMock
-        .Setup(v => v.ValidateAsync(It.IsAny<UserCreate>(), It.IsAny<CancellationToken>()))
-        .ReturnsAsync(new FluentValidation.Results.ValidationResult());
         mapperMock.Setup(u => u.Map<User>(It.IsAny<UserCreate>())).Returns(GetUser("teste@email.com"));
         mapperMock.Setup(u => u.Map<UserView>(It.IsAny<User>())).Returns(new UserView
         {
@@ -68,7 +64,7 @@ public class UserServiceTest
 
         var userDomainService = new UserDomainService(userRepositoryMock.Object, passwordServiceMock.Object);
 
-        var userService = new UserService(uowMock.Object, validatorMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
+        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
 
 
             //Act
@@ -90,62 +86,6 @@ public class UserServiceTest
 
 
     [Fact]
-    public async Task UserEntity_ShouldThrow_ValidationException()
-    {
-        //Arrange
-        User usuarioASerCriado = GetUser("teste");
-        var uowMock = new Mock<IUnitOfWork>();
-        var passwordServiceMock = new Mock<IPasswordHashService>();
-        var emailMock = new Mock<IEmailService>();
-        var userRepositoryMock = new Mock<IUserRepository>();
-        var roleRepositoryMock = new Mock<IRoleRepository>();
-        var mapperMock = new Mock<IMapper>();
-        var validatorMock = new Mock<IValidator<UserCreate>>();
-        var failures = new List<ValidationFailure>
-            {
-                new ValidationFailure("Password", "Senha inválida")
-            };
-        emailMock.Setup(e => e.SendAsync(It.IsAny<UserView>())).ReturnsAsync(true);
-        validatorMock
-            .Setup(v => v.ValidateAsync(It.IsAny<UserCreate>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ValidationResult(failures));
-        userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
-                          .ReturnsAsync(null as User);
-        userRepositoryMock
-            .Setup(r => r.Insert(It.IsAny<User>()))
-            .ReturnsAsync(GetUser("teste"));
-        mapperMock.Setup(u => u.Map<User>(It.IsAny<UserCreate>())).Returns(GetUser("teste"));
-        mapperMock.Setup(u => u.Map<UserView>(It.IsAny<User>())).Returns(new UserView
-        {
-            Email = "teste@email.com",
-            Name = "name"
-        });
-        mapperMock.Setup(u => u.Map<UserResponse>(It.IsAny<User>())).Returns(new UserResponse
-        {
-            Email = "teste@email.com",
-            Name = "name"
-        });
-        passwordServiceMock.Setup(p => p.GenerateHash(It.IsAny<string>()))
-            .Returns("asdasdasdasdasdadasdasd");
-
-        var userDomainService = new UserDomainService(userRepositoryMock.Object, passwordServiceMock.Object);
-
-        var userService = new UserService(uowMock.Object, validatorMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
-
-            //Act
-            await Assert.ThrowsAsync<BusinessException>(() => userService.CreateUser(new UserCreate
-            {
-                Cpf = "00000000",
-                BirthDate = DateTime.Now,
-                Email = "teste",
-                Name = "name",
-                Password = "12345678",
-                Phone = "1234567890"
-
-        }));
-    }
-
-    [Fact]
     public async Task UserEntity_ShouldThrow_FoundUserException()
     {
         //Arrange
@@ -156,7 +96,6 @@ public class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var roleRepositoryMock = new Mock<IRoleRepository>();
         var mapperMock = new Mock<IMapper>();
-        var validatorMock = new Mock<IValidator<UserCreate>>();
         emailMock.Setup(e => e.SendAsync(It.IsAny<UserView>())).ReturnsAsync(true);
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(GetUser("teste@email.com"));
@@ -164,9 +103,6 @@ public class UserServiceTest
             .Setup(r => r.Insert(It.IsAny<User>()))
             .ReturnsAsync(GetUser("teste@email.com"));
 
-        validatorMock
-        .Setup(v => v.ValidateAsync(It.IsAny<UserCreate>(), It.IsAny<CancellationToken>()))
-        .ReturnsAsync(new FluentValidation.Results.ValidationResult());
         mapperMock.Setup(u => u.Map<User>(It.IsAny<UserCreate>())).Returns(GetUser("teste@email.com"));
         mapperMock.Setup(u => u.Map<UserView>(It.IsAny<User>())).Returns(new UserView
         {
@@ -183,7 +119,7 @@ public class UserServiceTest
 
         var userDomainService = new UserDomainService(userRepositoryMock.Object, passwordServiceMock.Object);
 
-        var userService = new UserService(uowMock.Object, validatorMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
+        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
 
             //Act
             await Assert.ThrowsAsync<BusinessException>(() => userService.CreateUser(new UserCreate
@@ -196,5 +132,75 @@ public class UserServiceTest
                 Phone = "1234567890"
 
         }));
+    }
+
+    [Fact]
+    public async Task AdminEntity_Should_AddedInDb_WithTemporaryPasswordEmail()
+    {
+        //Arrange
+        var uowMock = new Mock<IUnitOfWork>();
+        var emailMock = new Mock<IEmailService>();
+        var passwordServiceMock = new Mock<IPasswordHashService>();
+        var userRepositoryMock = new Mock<IUserRepository>();
+        var mapperMock = new Mock<IMapper>();
+
+        User? insertedUserCapture = null;
+
+        userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
+                          .ReturnsAsync(null as User);
+        userRepositoryMock
+            .Setup(r => r.Insert(It.IsAny<User>()))
+            .Callback<User>(u => insertedUserCapture = u)
+            .ReturnsAsync((User u) => u);
+
+        mapperMock.Setup(u => u.Map<User>(It.IsAny<AdminCreate>())).Returns((AdminCreate u) => new User
+        {
+            Cpf = new CPF("51619938049"),
+            BirthDate = u.BirthDate,
+            Email = new Email(u.Email),
+            Name = u.Name,
+            Phone = u.Phone
+        });
+
+        mapperMock.Setup(u => u.Map<UserResponse>(It.IsAny<User>())).Returns((User u) => new UserResponse
+        {
+            Name = u.Name,
+            Email = u.Email.Value,
+            Phone = u.Phone,
+            BirthDate = u.BirthDate,
+            Cpf = u.Cpf.Code
+        });
+
+        mapperMock.Setup(u => u.Map<UserView>(It.IsAny<User>())).Returns((User u) => new UserView
+        {
+            Name = u.Name,
+            Email = u.Email.Value,
+            Phone = u.Phone,
+            BirthDate = u.BirthDate,
+            Cpf = u.Cpf.Code
+        });
+
+        emailMock.Setup(e => e.SendAsync(It.IsAny<UserView>(), It.IsAny<string>(), EmailOptions.Admin)).ReturnsAsync(true);
+        passwordServiceMock.Setup(p => p.GenerateHash(It.IsAny<string>())).Returns("hashed");
+
+        var userDomainService = new UserDomainService(userRepositoryMock.Object, passwordServiceMock.Object);
+        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
+
+        //Act
+        var userCriado = await userService.CreateAdmin(new AdminCreate
+        {
+            Cpf = "51619938049",
+            BirthDate = DateTime.Now,
+            Email = "admin@email.com",
+            Name = "admin",
+            Phone = "1234567890"
+        });
+
+        //Assert
+        Assert.NotNull(insertedUserCapture);
+        Assert.Contains(insertedUserCapture.Roles, r => r.Name == "ADMIN");
+        emailMock.Verify(e => e.SendAsync(It.IsAny<UserView>(), It.Is<string>(s => !string.IsNullOrWhiteSpace(s)), EmailOptions.Admin), Times.Once);
+        uowMock.Verify(u => u.CommitAsync(), Times.Once);
+        Assert.Equal("admin", userCriado.Name);
     }
 }

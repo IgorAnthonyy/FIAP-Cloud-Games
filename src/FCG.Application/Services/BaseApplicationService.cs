@@ -1,4 +1,4 @@
-﻿using FCG.Domain.Interfaces;
+﻿using FCG.Domain.Interfaces.Respositories;
 
 namespace FCG.Application.Services;
 

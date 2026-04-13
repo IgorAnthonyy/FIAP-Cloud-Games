@@ -13,6 +13,7 @@ using FCG.Infrastructure.Persistence;
 using FCG.Infrastructure.Repositories;
 using FCG.Infrastructure.Settings;
 using FCG.Api.Middlewares;
+using FCG.Api.Filters;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi;
 using FCG.Infrastructure.Email.Service;
+using FCG.Domain.Interfaces.Respositories;
 
 namespace FCG.Api.Extensions;
 
@@ -29,7 +31,12 @@ public static class ProgramExtensions
 {
     public static IServiceCollection ConfigureApi(this IServiceCollection services)
     {
-        services.AddControllers();
+        services.AddScoped<FluentValidationActionFilter>();
+
+        services.AddControllers(options =>
+        {
+            options.Filters.Add<FluentValidationActionFilter>();
+        });
 
         services.AddSwaggerGen(options =>
         {
@@ -51,6 +58,7 @@ public static class ProgramExtensions
     public static IServiceCollection ConfigureApplication(this IServiceCollection services)
     {
         services.AddScoped<IValidator<UserCreate>, UserValidator>();
+        services.AddScoped<IValidator<AdminCreate>, AdminValidator>();
         
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IEmailService, EmailService>();
@@ -67,8 +75,8 @@ public static class ProgramExtensions
 
         IMapper mapper = mapperConfig.CreateMapper();
 
-        
         services.AddSingleton(mapper);
+        
         return services;
     }
 
