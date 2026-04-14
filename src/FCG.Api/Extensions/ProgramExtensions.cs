@@ -23,6 +23,7 @@ using Microsoft.OpenApi;
 using FCG.Infrastructure.Email.Service;
 using FCG.Domain.Interfaces.Respositories;
 using FCG.Infrastructure.Password;
+using FCG.Infrastructure.Security;
 
 namespace FCG.Api.Extensions;
 
@@ -36,7 +37,7 @@ public static class ProgramExtensions
         {
             options.Filters.Add<FluentValidationActionFilter>();
         });
-
+        services.AddHttpContextAccessor();
         services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc("v1", new OpenApiInfo
@@ -98,7 +99,7 @@ public static class ProgramExtensions
         services.AddScoped<IRoleRepository, RoleRepository>();
 
         services.AddScoped<IEmailService, EmailService>();
-
+        services.AddScoped<IUserLogged, UserLogged>();
         return services;
     }
 

@@ -3,10 +3,14 @@ using FCG.Application.DTOs;
 using FCG.Application.Interfaces;
 using FCG.Domain.Contants;
 using FCG.Domain.Entities;
+using FCG.Domain.Exceptions;
 using FCG.Domain.Interfaces;
 using FCG.Domain.Interfaces.Respositories;
 using FCG.Domain.Views;
+using Microsoft.IdentityModel.JsonWebTokens;
+using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
@@ -17,14 +21,17 @@ public class UserService : BaseApplicationService, IUserService
     private readonly IEmailService _emailService;
     private readonly IUserDomainService _userDomainService;
     private readonly IMapper _mapper;
+    private readonly IUserLogged _userLogged;
     public UserService(IUnitOfWork unitOfWork,
         IMapper mapper,
         IEmailService emailService,
-        IUserDomainService userDomainService) : base(unitOfWork)
+        IUserDomainService userDomainService,
+        IUserLogged userLogged) : base(unitOfWork)
     {
         _mapper = mapper;
         _emailService = emailService;
         _userDomainService = userDomainService;
+        _userLogged = userLogged;
     }
 
     public async Task<UserResponse> CreateUser(UserCreate user)
@@ -86,5 +93,19 @@ public class UserService : BaseApplicationService, IUserService
         }
 
         return new string(chars.ToArray());
+    }
+
+    public async Task<bool> DeleteUser(Guid idUserToDeleted)
+    {
+        string emailUserLogged = (_userLogged.UserEmail) ?? throw new BusinessException("Email do usuário logado não encontrado");
+        bool canDelete = await _userDomainService.DeleteUser(idUserToDeleted, emailUserLogged);
+        if (canDelete)
+        {
+            await UnitOfWork.CommitAsync();
+            return canDelete;
+        }
+        return canDelete;
+
+
     }
 }

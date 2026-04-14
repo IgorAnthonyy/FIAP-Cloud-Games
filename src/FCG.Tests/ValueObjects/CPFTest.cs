@@ -8,21 +8,21 @@ public class CPFTest
     public void CPFValue_Valid()
     {
 
-        var cpf = new CPF("06515537506");
-        Assert.Equal("06515537506", cpf.Code);
+        var cpf = new CPF("27966231577");
+        Assert.Equal("27966231577", cpf.Code);
     }
 
     [Fact]
     public void CPFValue_InvalidLength()
     {
 
-        Assert.Throws<ApplicationException>(() => new CPF("0651553750"));
+        Assert.Throws<ApplicationException>(() => new CPF("2796623157"));
     }
 
     [Fact]
     public void CPFValue_InvalidDigits()
     {
 
-        Assert.Throws<ApplicationException>(() => new CPF("06515537507"));
+        Assert.Throws<ApplicationException>(() => new CPF("27966231572"));
     }
 }

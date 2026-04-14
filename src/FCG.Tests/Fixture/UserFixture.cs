@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using Bogus.Extensions.Brazil;
+using FCG.Domain.Contants;
 using FCG.Domain.Entities;
 using FCG.Domain.ValueObjects;
 
@@ -25,5 +26,44 @@ public class UserFixture
         bool situation = _faker.Random.Bool();
 
         return new User { Name = name, Email = email, Password = password, Phone = phone, BirthDate = birthDate, Situation = situation };
+    }
+
+    public User GenerateUserWithRoleAdmin()
+    {
+        string name = _faker.Name.FullName();
+        var email = new Email("teste@teste.com");
+        var password = _faker.Internet.Password();
+        string phone = _faker.Phone.PhoneNumber();
+        string cpf = _faker.Person.Cpf();
+        DateTime birthDate = _faker.Date.Past(50, DateTime.Now.AddYears(-20));
+        bool situation = _faker.Random.Bool();
+
+        return new User { Name = name, Email = email, Password = password, Phone = phone, BirthDate = birthDate, Situation = situation, Roles = [new Role { Name = FCGConstant.AdminRole }] };
+    }
+
+    public User GenerateUserWithRoles()
+    {
+        string name = _faker.Name.FullName();
+        var email = new Email("teste@teste.com");
+        var password = _faker.Internet.Password();
+        string phone = _faker.Phone.PhoneNumber();
+        string cpf = _faker.Person.Cpf();
+        DateTime birthDate = _faker.Date.Past(50, DateTime.Now.AddYears(-20));
+        bool situation = _faker.Random.Bool();
+
+        return new User { Name = name, Email = email, Password = password, Phone = phone, BirthDate = birthDate, Situation = situation, Roles = [new Role { Name = FCGConstant.AdminRole }, new Role { Name = FCGConstant.UserDefault }] };
+    }
+
+    public User GenerateUserWithRolesDefault()
+    {
+        string name = _faker.Name.FullName();
+        var email = new Email("teste@teste.com");
+        var password = _faker.Internet.Password();
+        string phone = _faker.Phone.PhoneNumber();
+        string cpf = _faker.Person.Cpf();
+        DateTime birthDate = _faker.Date.Past(50, DateTime.Now.AddYears(-20));
+        bool situation = _faker.Random.Bool();
+
+        return new User { Name = name, Email = email, Password = password, Phone = phone, BirthDate = birthDate, Situation = situation, Roles = [new Role { Name = FCGConstant.UserDefault }] };
     }
 }
