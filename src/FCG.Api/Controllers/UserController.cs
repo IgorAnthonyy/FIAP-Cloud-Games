@@ -41,7 +41,8 @@ public class UserController : BaseController
         {
             new Claim(JwtRegisteredClaimNames.Email, "teste@teste.com")
         }, "TestAuth");
-        var userDeleted = await _userService.DeleteUser(idUserToDeleted, new System.Security.Claims.ClaimsIdentity(identity));
+        HttpContext.User = new ClaimsPrincipal(identity);
+        var userDeleted = await _userService.DeleteUser(idUserToDeleted);
         if (!userDeleted) return Unauthorized(new { Message = "Não foi possível deletar usuárrio, por que você não está autorizado" });
         return Ok(new {Message = "Usuário deletado com sucesso"});
     }

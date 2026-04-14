@@ -21,14 +21,17 @@ public class UserService : BaseApplicationService, IUserService
     private readonly IEmailService _emailService;
     private readonly IUserDomainService _userDomainService;
     private readonly IMapper _mapper;
+    private readonly IUserLogged _userLogged;
     public UserService(IUnitOfWork unitOfWork,
         IMapper mapper,
         IEmailService emailService,
-        IUserDomainService userDomainService) : base(unitOfWork)
+        IUserDomainService userDomainService,
+        IUserLogged userLogged) : base(unitOfWork)
     {
         _mapper = mapper;
         _emailService = emailService;
         _userDomainService = userDomainService;
+        _userLogged = userLogged;
     }
 
     public async Task<UserResponse> CreateUser(UserCreate user)
@@ -92,9 +95,9 @@ public class UserService : BaseApplicationService, IUserService
         return new string(chars.ToArray());
     }
 
-    public async Task<bool> DeleteUser(Guid idUserToDeleted, ClaimsIdentity claimsIdentity)
+    public async Task<bool> DeleteUser(Guid idUserToDeleted)
     {
-        string emailUserLogged = (claimsIdentity.FindFirst(JwtRegisteredClaimNames.Email)?.Value) ?? throw new BusinessException("Email do usuário logado não encontrado");
+        string emailUserLogged = (_userLogged.UserEmail) ?? throw new BusinessException("Email do usuário logado não encontrado");
         bool canDelete = await _userDomainService.DeleteUser(idUserToDeleted, emailUserLogged);
         if (canDelete)
         {

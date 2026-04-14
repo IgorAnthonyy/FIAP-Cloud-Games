@@ -41,18 +41,20 @@ public class UserServiceTest
             };
         }
 
-        [Fact]
-        public async Task UserEntity_Should_AddedInDb()
-        {
-            //Arrange
-            User usuarioASerCriado = GetUser("teste@email.com");
-            var uowMock = new Mock<IUnitOfWork>();
-            var emailMock = new Mock<IEmailService>();
-            var passwordServiceMock = new Mock<IPasswordHashService>();
-            var userRepositoryMock = new Mock<IUserRepository>();
-            var roleRepositoryMock = new Mock<IRoleRepository>();
-            var mapperMock = new Mock<IMapper>();
+    [Fact]
+    public async Task UserEntity_Should_AddedInDb()
+    {
+        //Arrange
+        User usuarioASerCriado = GetUser("teste@email.com");
+        var uowMock = new Mock<IUnitOfWork>();
+        var emailMock = new Mock<IEmailService>();
+        var passwordServiceMock = new Mock<IPasswordHashService>();
+        var userRepositoryMock = new Mock<IUserRepository>();
+        var roleRepositoryMock = new Mock<IRoleRepository>();
+        var mapperMock = new Mock<IMapper>();
+        var userLoggedMock = new Mock<IUserLogged>();
 
+        userLoggedMock.Setup(ul => ul.UserEmail).Returns("");
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(null as User);
         emailMock.Setup(e => e.SendAsync(It.IsAny<UserView>())).ReturnsAsync(true);
@@ -76,18 +78,18 @@ public class UserServiceTest
 
         var userDomainService = new UserDomainService(userRepositoryMock.Object, passwordServiceMock.Object);
 
-        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
+        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService, userLoggedMock.Object);
 
 
             //Act
-            var userCriado = await userService.CreateUser(new UserCreate
-            {
-                Cpf = "00000000",
-                BirthDate = DateTime.Now,
-                Email = "teste@email.com",
-                Name = "name",
-                Password = "123@T1password",
-                Phone = "1234567890"
+        var userCriado = await userService.CreateUser(new UserCreate
+        {
+            Cpf = "00000000",
+            BirthDate = DateTime.Now,
+            Email = "teste@email.com",
+            Name = "name",
+            Password = "123@T1password",
+            Phone = "1234567890"
 
         });
 
@@ -109,6 +111,10 @@ public class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var roleRepositoryMock = new Mock<IRoleRepository>();
         var mapperMock = new Mock<IMapper>();
+        var userLoggedMock = new Mock<IUserLogged>();
+
+        userLoggedMock.Setup(ul => ul.UserEmail).Returns(userAdmin.Email.Value);
+
 
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(userAdmin);
@@ -123,15 +129,10 @@ public class UserServiceTest
 
         var userDomainService = new UserDomainService(userRepositoryMock.Object, passwordServiceMock.Object);
 
-        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
-
-        var identity = new ClaimsIdentity(new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Email, userAdmin.Email.Value)
-        }, "TestAuth");
+        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService, userLoggedMock.Object);
 
         //Act
-        bool userDeleted = await userService.DeleteUser(userRemove.Id, identity);
+        bool userDeleted = await userService.DeleteUser(userRemove.Id);
 
         userRepositoryMock.Verify(r => r.Delete(It.IsAny<User>()), Times.Once);
         uowMock.Verify(u => u.CommitAsync(), Times.Once);
@@ -151,7 +152,9 @@ public class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var roleRepositoryMock = new Mock<IRoleRepository>();
         var mapperMock = new Mock<IMapper>();
+        var userLoggedMock = new Mock<IUserLogged>();
 
+        userLoggedMock.Setup(ul => ul.UserEmail).Returns(userAdmin.Email.Value);
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(userAdmin);
 
@@ -165,16 +168,11 @@ public class UserServiceTest
 
         var userDomainService = new UserDomainService(userRepositoryMock.Object, passwordServiceMock.Object);
 
-        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
+        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService, userLoggedMock.Object);
 
-
-        var identity = new ClaimsIdentity(new[]
-       {
-            new Claim(JwtRegisteredClaimNames.Email, userAdmin.Email.Value)
-        }, "TestAuth");
 
         //Act
-        await Assert.ThrowsAsync<BusinessException>(() => userService.DeleteUser(userRemove.Id, identity));
+        await Assert.ThrowsAsync<BusinessException>(() => userService.DeleteUser(userRemove.Id));
     }
 
     [Fact]
@@ -189,7 +187,9 @@ public class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var roleRepositoryMock = new Mock<IRoleRepository>();
         var mapperMock = new Mock<IMapper>();
+        var userLoggedMock = new Mock<IUserLogged>();
 
+        userLoggedMock.Setup(ul => ul.UserEmail).Returns(userAdmin.Email.Value);
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(userAdmin);
         userRepositoryMock.Setup(u => u.GetById(It.IsAny<Guid>()))
@@ -203,16 +203,11 @@ public class UserServiceTest
 
         var userDomainService = new UserDomainService(userRepositoryMock.Object, passwordServiceMock.Object);
 
-        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
+        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService, userLoggedMock.Object);
 
-
-        var identity = new ClaimsIdentity(new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Email, userAdmin.Email.Value)
-        }, "TestAuth");
 
         //Act
-        bool userDeleted = await userService.DeleteUser(userRemove.Id, identity);
+        bool userDeleted = await userService.DeleteUser(userRemove.Id);
 
         Assert.False(userDeleted);
     }
@@ -229,7 +224,9 @@ public class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var roleRepositoryMock = new Mock<IRoleRepository>();
         var mapperMock = new Mock<IMapper>();
+        var userLoggedMock = new Mock<IUserLogged>();
 
+        userLoggedMock.Setup(ul => ul.UserEmail).Returns(userAdmin.Email.Value);
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(null as User);
 
@@ -243,16 +240,11 @@ public class UserServiceTest
 
         var userDomainService = new UserDomainService(userRepositoryMock.Object, passwordServiceMock.Object);
 
-        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
+        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService, userLoggedMock.Object);
 
-
-        var identity = new ClaimsIdentity(new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Email, userAdmin.Email.Value)
-        }, "TestAuth");
 
         //Act
-        await Assert.ThrowsAsync<BusinessException>(() => userService.DeleteUser(userRemove.Id, identity));
+        await Assert.ThrowsAsync<BusinessException>(() => userService.DeleteUser(userRemove.Id));
     }
 
 
@@ -267,6 +259,9 @@ public class UserServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var roleRepositoryMock = new Mock<IRoleRepository>();
         var mapperMock = new Mock<IMapper>();
+        var userLoggedMock = new Mock<IUserLogged>();
+
+        userLoggedMock.Setup(ul => ul.UserEmail).Returns("");
         emailMock.Setup(e => e.SendAsync(It.IsAny<UserView>())).ReturnsAsync(true);
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(GetUser("teste@email.com"));
@@ -290,17 +285,17 @@ public class UserServiceTest
 
         var userDomainService = new UserDomainService(userRepositoryMock.Object, passwordServiceMock.Object);
 
-        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
+        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService, userLoggedMock.Object);
 
             //Act
-            await Assert.ThrowsAsync<BusinessException>(() => userService.CreateUser(new UserCreate
-            {
-                Cpf = "00000000",
-                BirthDate = DateTime.Now,
-                Email = "teste",
-                Name = "name",
-                Password = "12345678",
-                Phone = "1234567890"
+        await Assert.ThrowsAsync<BusinessException>(() => userService.CreateUser(new UserCreate
+        {
+            Cpf = "00000000",
+            BirthDate = DateTime.Now,
+            Email = "teste",
+            Name = "name",
+            Password = "12345678",
+            Phone = "1234567890"
 
         }));
     }
@@ -314,7 +309,9 @@ public class UserServiceTest
         var passwordServiceMock = new Mock<IPasswordHashService>();
         var userRepositoryMock = new Mock<IUserRepository>();
         var mapperMock = new Mock<IMapper>();
+        var userLoggedMock = new Mock<IUserLogged>();
 
+        userLoggedMock.Setup(ul => ul.UserEmail).Returns("");
         User? insertedUserCapture = null;
 
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
@@ -355,7 +352,7 @@ public class UserServiceTest
         passwordServiceMock.Setup(p => p.GenerateHash(It.IsAny<string>())).Returns("hashed");
 
         var userDomainService = new UserDomainService(userRepositoryMock.Object, passwordServiceMock.Object);
-        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService);
+        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService, userLoggedMock.Object);
 
         //Act
         var userCriado = await userService.CreateAdmin(new AdminCreate
