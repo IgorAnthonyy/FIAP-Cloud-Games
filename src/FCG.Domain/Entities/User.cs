@@ -1,6 +1,8 @@
+using FCG.Domain.Contants;
 using FCG.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FCG.Domain.Entities;
 
@@ -43,5 +45,10 @@ public class User : BaseEntity
 
         role.UserId = Id;
         Roles.Add(role);
+    }
+
+    public bool IsAdmin()
+    {
+        return Roles.Any(r => r.Name == FCGConstant.AdminRole);
     }
 }

@@ -42,7 +42,7 @@ public class UserDomainService : IUserDomainService
         User userLogged = await _userRepository.GetByEmail(emailUserLogged);
         if(userLogged == null) throw new BusinessException("Usuário logado não encontrado");
 
-        if(userLogged.Roles.FirstOrDefault(r => r.Name == FCGConstant.AdminRole) == null) return false;
+        if(!userLogged.IsAdmin()) return false;
 
         User userToDeleted = await _userRepository.GetById(idUserToDeleted);
 
