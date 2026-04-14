@@ -1,9 +1,12 @@
 ﻿using FCG.Application.Interfaces;
+using FCG.Domain.Contants;
 using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
 using FCG.Domain.Interfaces;
 using FCG.Domain.Interfaces.Respositories;
 using FCG.Domain.ValueObjects;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FCG.Domain.Services;
@@ -32,5 +35,22 @@ public class UserDomainService : IUserDomainService
         User insertedUser = await _userRepository.Insert(user);
 
         return insertedUser;
+    }
+
+    public async Task<bool> DeleteUser(Guid idUserToDeleted, string emailUserLogged)
+    {
+        User userLogged = await _userRepository.GetByEmail(emailUserLogged);
+        if(userLogged == null) throw new BusinessException("Usuário logado não encontrado");
+
+        if(userLogged.Roles.FirstOrDefault(r => r.Name == FCGConstant.AdminRole) == null) return false;
+
+        User userToDeleted = await _userRepository.GetById(idUserToDeleted);
+
+        if (userToDeleted == null) throw new BusinessException("Usuário a ser deletado não existe");
+
+        _userRepository.Delete(userToDeleted);
+
+        return true;
+
     }
 }

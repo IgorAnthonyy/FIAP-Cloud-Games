@@ -3,11 +3,14 @@ using FCG.Application.DTOs;
 using FCG.Application.Interfaces;
 using FCG.Domain.Contants;
 using FCG.Domain.Entities;
+using FCG.Domain.Exceptions;
 using FCG.Domain.Interfaces;
 using FCG.Domain.Interfaces.Respositories;
 using FCG.Domain.Views;
+using Microsoft.IdentityModel.JsonWebTokens;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
@@ -89,8 +92,17 @@ public class UserService : BaseApplicationService, IUserService
         return new string(chars.ToArray());
     }
 
-    public async Task<bool> DeleteUser(string value, string v)
+    public async Task<bool> DeleteUser(Guid idUserToDeleted, ClaimsIdentity claimsIdentity)
     {
-        throw new NotImplementedException();
+        string emailUserLogged = (claimsIdentity.FindFirst(JwtRegisteredClaimNames.Email)?.Value) ?? throw new BusinessException("Email do usuário logado não encontrado");
+        bool canDelete = await _userDomainService.DeleteUser(idUserToDeleted, emailUserLogged);
+        if (canDelete)
+        {
+            await UnitOfWork.CommitAsync();
+            return canDelete;
+        }
+        return canDelete;
+
+
     }
 }
