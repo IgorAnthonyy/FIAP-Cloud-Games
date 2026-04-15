@@ -7,7 +7,7 @@ namespace FCG.Application.Interfaces
 {
     public interface IUserLogged
     {
-        string UserId{ get; }
+        Guid UserId{ get; }
 
         List<Role> Roles { get; }
 

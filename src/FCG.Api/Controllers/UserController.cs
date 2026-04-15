@@ -49,7 +49,6 @@ public class UserController : BaseController
     public async Task<IActionResult> DeleteUser([FromRoute] Guid idUserToDeleted)
     {
 
-        //TODO: Refatorar o jeito de pegar claims, coloquei chumbado por que nesse momento do commit ainda não tem autenticação pra criar os claims
         var userDeleted = await _userService.DeleteUser(idUserToDeleted);
         if (!userDeleted) return Unauthorized(new { Message = "Não foi possível deletar usuárrio, por que você não está autorizado" });
         return Ok(new {Message = "Usuário deletado com sucesso"});

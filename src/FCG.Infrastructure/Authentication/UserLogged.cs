@@ -21,7 +21,7 @@ namespace FCG.Infrastructure.Authentication
             _httpContextAcessor = httpContextAcessor;
         }
 
-        public string UserId => _httpContextAcessor.HttpContext.User.FindFirst(JwtRegisteredClaimNames.Email)?.Value;
+        public Guid UserId => new (_httpContextAcessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
         public List<Role> Roles => _httpContextAcessor.HttpContext.User.FindAll(ClaimTypes.Role).Select(r => new Role
         {

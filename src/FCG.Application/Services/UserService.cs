@@ -68,16 +68,16 @@ public class UserService : BaseApplicationService, IUserService
     
     public async Task<UserResponse> UpdateUser(UserUpdate user)
     {
-        var loggedEmail = _userLogged.UserEmail;
+        var loggedId = _userLogged.UserId;
 
-        var loggedUser = await _userDomainService.GetByEmail(loggedEmail);
+        var loggedUser = await _userDomainService.GetById(loggedId);
 
         var userToUpdate = await _userDomainService.GetById(user.Id);
 
         if (userToUpdate == null)
             throw new BusinessException("Usuário não encontrado");
 
-        bool isAdmin = loggedUser.Roles.Any(r => r.Name == FCGConstant.AdminRole);
+        bool isAdmin = _userLogged.IsAdmin;
 
         if (!isAdmin && loggedUser.Id != user.Id)
             throw new BusinessException("Você não tem permissão para editar este usuário");
@@ -99,16 +99,6 @@ public class UserService : BaseApplicationService, IUserService
         return _mapper.Map<UserResponse>(userToUpdate);
     }
     
-    public async Task<bool> DeleteUser(Guid idUserToDeleted)
-    {
-        bool canDelete = await _userDomainService.DeleteUser(idUserToDeleted);
-        if (canDelete)
-        {
-            await UnitOfWork.CommitAsync();
-            return canDelete;
-        }
-        return canDelete;
-    }
 
     private static string GenerateTemporaryPassword(int length = 12)
     {
