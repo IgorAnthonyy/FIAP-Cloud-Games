@@ -33,6 +33,16 @@ public class UserController : BaseController
         var userCreated = await _userService.CreateAdmin(user);
         return CreatedResult(userCreated);
     }
+    
+    [HttpPut("{id:guid}")]
+    [Authorize]
+    public async Task<IActionResult> UpdateUser([FromRoute] Guid id, [FromBody] UserUpdate request)
+    {
+        request.Id = id;
+    
+        var result = await _userService.UpdateUser(request);
+        return Ok(result);
+    }
 
     [HttpDelete("{idUserToDeleted:guid}")]
     [Authorize(Policy = FCGConstant.AdminRole)]

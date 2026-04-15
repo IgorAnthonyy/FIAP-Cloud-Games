@@ -10,6 +10,7 @@ using FCG.Domain.Views;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -63,6 +64,50 @@ public class UserService : BaseApplicationService, IUserService
         await _emailService.SendAsync(userView, temporaryPassword, Domain.Enums.EmailOptions.Admin);
 
         return userResponse;
+    }
+    
+    public async Task<UserResponse> UpdateUser(UserUpdate user)
+    {
+        var loggedEmail = _userLogged.UserEmail;
+
+        var loggedUser = await _userDomainService.GetByEmail(loggedEmail);
+
+        var userToUpdate = await _userDomainService.GetById(user.Id);
+
+        if (userToUpdate == null)
+            throw new BusinessException("Usuário não encontrado");
+
+        bool isAdmin = loggedUser.Roles.Any(r => r.Name == FCGConstant.AdminRole);
+
+        if (!isAdmin && loggedUser.Id != user.Id)
+            throw new BusinessException("Você não tem permissão para editar este usuário");
+
+        if (user.Situation.HasValue && !isAdmin)
+            throw new BusinessException("Apenas administradores podem alterar a situação do usuário");
+
+        userToUpdate.Name = user.Name;
+        userToUpdate.Phone = user.Phone;
+        userToUpdate.BirthDate = user.BirthDate;
+
+        if (isAdmin && user.Situation.HasValue)
+            userToUpdate.Situation = user.Situation.Value;
+
+        await _userDomainService.UpdateUser(userToUpdate);
+
+        await UnitOfWork.CommitAsync();
+
+        return _mapper.Map<UserResponse>(userToUpdate);
+    }
+    
+    public async Task<bool> DeleteUser(Guid idUserToDeleted)
+    {
+        bool canDelete = await _userDomainService.DeleteUser(idUserToDeleted);
+        if (canDelete)
+        {
+            await UnitOfWork.CommitAsync();
+            return canDelete;
+        }
+        return canDelete;
     }
 
     private static string GenerateTemporaryPassword(int length = 12)

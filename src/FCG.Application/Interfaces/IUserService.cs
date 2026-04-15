@@ -9,5 +9,6 @@ public interface IUserService
 {
     Task<UserResponse> CreateUser(UserCreate user);
     Task<UserResponse> CreateAdmin(AdminCreate user);
+    Task<UserResponse> UpdateUser(UserUpdate user);
     Task<bool> DeleteUser(Guid idUserToDeleted);
 }

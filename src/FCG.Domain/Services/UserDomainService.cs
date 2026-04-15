@@ -46,4 +46,29 @@ public class UserDomainService : IUserDomainService
         _userRepository.Delete(userToDeleted);
 
     }
+    
+    public async Task<User> GetById(Guid id)
+    {
+        return await _userRepository.GetById(id);
+    }
+    
+    public async Task<User> GetByEmail(string email)
+    {
+        return await _userRepository.GetByEmail(email);
+    }
+    
+    public async Task<User> UpdateUser(User user)
+    {
+        User userToUpdate = await _userRepository.GetById(user.Id);
+        if (userToUpdate == null)
+            throw new BusinessException("Usuário não encontrado");
+
+        userToUpdate.Name = user.Name;
+        userToUpdate.Phone = user.Phone;
+        userToUpdate.BirthDate = user.BirthDate;
+
+        _userRepository.Update(userToUpdate);
+
+        return userToUpdate;
+    }
 }
