@@ -97,8 +97,7 @@ public class UserService : BaseApplicationService, IUserService
 
     public async Task<bool> DeleteUser(Guid idUserToDeleted)
     {
-        string emailUserLogged = (_userLogged.UserEmail) ?? throw new BusinessException("Email do usuário logado não encontrado");
-        bool canDelete = await _userDomainService.DeleteUser(idUserToDeleted, emailUserLogged);
+        bool canDelete = await _userDomainService.DeleteUser(idUserToDeleted);
         if (canDelete)
         {
             await UnitOfWork.CommitAsync();

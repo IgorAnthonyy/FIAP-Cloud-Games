@@ -1,5 +1,7 @@
 ﻿using FCG.Application.DTOs;
 using FCG.Application.Interfaces;
+using FCG.Domain.Contants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System;
@@ -33,15 +35,11 @@ public class UserController : BaseController
     }
 
     [HttpDelete("{idUserToDeleted:guid}")]
+    [Authorize(Policy = FCGConstant.AdminRole)]
     public async Task<IActionResult> DeleteUser([FromRoute] Guid idUserToDeleted)
     {
 
         //TODO: Refatorar o jeito de pegar claims, coloquei chumbado por que nesse momento do commit ainda não tem autenticação pra criar os claims
-        var identity = new ClaimsIdentity(new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Email, "teste@teste.com")
-        }, "TestAuth");
-        HttpContext.User = new ClaimsPrincipal(identity);
         var userDeleted = await _userService.DeleteUser(idUserToDeleted);
         if (!userDeleted) return Unauthorized(new { Message = "Não foi possível deletar usuárrio, por que você não está autorizado" });
         return Ok(new {Message = "Usuário deletado com sucesso"});

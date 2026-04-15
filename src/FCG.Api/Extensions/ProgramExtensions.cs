@@ -23,16 +23,45 @@ using Microsoft.OpenApi;
 using FCG.Infrastructure.Email.Service;
 using FCG.Domain.Interfaces.Respositories;
 using FCG.Infrastructure.Password;
-using FCG.Infrastructure.Security;
+using FCG.Infrastructure.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using FCG.Domain.Contants;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System;
 
 namespace FCG.Api.Extensions;
 
 public static class ProgramExtensions
 {
-    public static IServiceCollection ConfigureApi(this IServiceCollection services)
+    public static IServiceCollection ConfigureApi(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<FluentValidationActionFilter>();
+        var key = configuration["Jwt:Key"];
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = true;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = configuration["Jwt:Issuer"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+            };
+        });
 
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy(FCGConstant.AdminRole, policy => policy.RequireRole(FCGConstant.AdminRole));
+            options.AddPolicy(FCGConstant.UserDefault, policy => policy.RequireRole(FCGConstant.UserDefault));
+        });
         services.AddControllers(options =>
         {
             options.Filters.Add<FluentValidationActionFilter>();
@@ -50,6 +79,19 @@ public static class ProgramExtensions
                     Name = "FIAP Cloud Games"
                 }
             });
+
+            options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT",
+                Description = "JWT Authorization header using the Bearer scheme."
+            });
+
+            options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference("bearer", document)] = []
+            });
         });
 
         return services;
@@ -61,7 +103,7 @@ public static class ProgramExtensions
         services.AddScoped<IValidator<AdminCreate>, AdminValidator>();
         
         services.AddScoped<IUserService, UserService>();
-        
+        services.AddScoped<IAcessService, AcessService>();
         var loggerFactory = LoggerFactory.Create(builder =>
         {
             builder.AddConsole();
@@ -82,9 +124,9 @@ public static class ProgramExtensions
 
     public static IServiceCollection ConfigureDomain(this IServiceCollection services)
     {
-        services.AddScoped<IPasswordHashService, PasswordHashService>();
+        services.AddScoped<IPasswordService, PasswordService>();
         services.AddScoped<IUserDomainService, UserDomainService>();
-        
+        services.AddScoped<IAcessDomainService, AcessDomainService>();
         return services;
     }
 
@@ -100,6 +142,7 @@ public static class ProgramExtensions
 
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IUserLogged, UserLogged>();
+        services.AddScoped<ITokenService, TokenService>();
         return services;
     }
 

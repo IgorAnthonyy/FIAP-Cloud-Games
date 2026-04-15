@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FCG.Infrastructure.Security
+namespace FCG.Infrastructure.Authentication
 {
     public class UserLogged : IUserLogged
     {

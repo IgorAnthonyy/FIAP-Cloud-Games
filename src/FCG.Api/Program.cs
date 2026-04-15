@@ -12,7 +12,7 @@ public class Program
         #region Services
         builder.Services
             .ConfigureSettings(builder.Configuration)
-            .ConfigureApi()
+            .ConfigureApi(builder.Configuration)
             .ConfigureApplication()
             .ConfigureDomain()
             .ConfigureInfrastructure(builder.Configuration);
@@ -24,6 +24,8 @@ public class Program
         #region Middleware
 
         app.ConfigureMiddleware();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         #endregion
 

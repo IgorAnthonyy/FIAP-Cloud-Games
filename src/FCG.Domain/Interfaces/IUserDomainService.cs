@@ -8,5 +8,5 @@ public interface IUserDomainService
 {
     Task<User> CreateUser(User user, string role);
 
-    Task<bool> DeleteUser(Guid idUserToDeleted, string emailUserLogged);
+    Task<bool> DeleteUser(Guid idUserToDeleted);
 }
