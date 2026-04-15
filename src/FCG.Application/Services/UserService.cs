@@ -97,14 +97,9 @@ public class UserService : BaseApplicationService, IUserService
 
     public async Task<bool> DeleteUser(Guid idUserToDeleted)
     {
-        bool canDelete = await _userDomainService.DeleteUser(idUserToDeleted);
-        if (canDelete)
-        {
-            await UnitOfWork.CommitAsync();
-            return canDelete;
-        }
-        return canDelete;
-
-
+        if (!_userLogged.IsAdmin) return false;
+        await _userDomainService.DeleteUser(idUserToDeleted);
+        await UnitOfWork.CommitAsync();
+        return true;
     }
 }

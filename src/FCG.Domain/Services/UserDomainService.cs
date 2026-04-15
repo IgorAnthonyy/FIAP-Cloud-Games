@@ -36,7 +36,7 @@ public class UserDomainService : IUserDomainService
         return insertedUser;
     }
 
-    public async Task<bool> DeleteUser(Guid idUserToDeleted)
+    public async Task DeleteUser(Guid idUserToDeleted)
     {
 
         User userToDeleted = await _userRepository.GetById(idUserToDeleted);
@@ -44,8 +44,6 @@ public class UserDomainService : IUserDomainService
         if (userToDeleted == null) throw new BusinessException("Usuário a ser deletado não existe");
 
         _userRepository.Delete(userToDeleted);
-
-        return true;
 
     }
 }
