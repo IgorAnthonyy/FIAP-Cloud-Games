@@ -48,9 +48,7 @@ public class UserController : BaseController
     [Authorize(Policy = FCGConstant.AdminRole)]
     public async Task<IActionResult> DeleteUser([FromRoute] Guid idUserToDeleted)
     {
-
-        var userDeleted = await _userService.DeleteUser(idUserToDeleted);
-        if (!userDeleted) return Unauthorized(new { Message = "Não foi possível deletar usuárrio, por que você não está autorizado" });
+        await _userService.DeleteUser(idUserToDeleted);
         return Ok(new {Message = "Usuário deletado com sucesso"});
     }
 }

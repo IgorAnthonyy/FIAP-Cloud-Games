@@ -132,11 +132,10 @@ public class UserServiceTest
         var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService, userLoggedMock.Object);
 
         //Act
-        bool userDeleted = await userService.DeleteUser(userRemove.Id);
+        await userService.DeleteUser(userRemove.Id);
 
         userRepositoryMock.Verify(r => r.Delete(It.IsAny<User>()), Times.Once);
         uowMock.Verify(u => u.CommitAsync(), Times.Once);
-        Assert.True(userDeleted);
     }
 
 
@@ -207,9 +206,10 @@ public class UserServiceTest
 
 
         //Act
-        bool userDeleted = await userService.DeleteUser(userRemove.Id);
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => userService.DeleteUser(userRemove.Id));
 
-        Assert.False(userDeleted);
+        userRepositoryMock.Verify(r => r.Delete(It.IsAny<User>()), Times.Never);
+        uowMock.Verify(u => u.CommitAsync(), Times.Never);
     }
 
     [Fact]

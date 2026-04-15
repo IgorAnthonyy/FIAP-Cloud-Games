@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -43,6 +44,7 @@ public class GlobalExceptionMiddleware
     {
         var statusCode = exception switch
         {
+            UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
             BusinessException => StatusCodes.Status400BadRequest,
             ValidationException => StatusCodes.Status400BadRequest,
             KeyNotFoundException => StatusCodes.Status404NotFound,

@@ -37,36 +37,16 @@ public static class ProgramExtensions
     public static IServiceCollection ConfigureApi(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<FluentValidationActionFilter>();
-        var key = configuration["Jwt:Key"];
-        services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(options =>
-        {
-            options.RequireHttpsMetadata = false;
-            options.SaveToken = true;
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = false,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = configuration["Jwt:Issuer"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
-            };
-        });
 
-        services.AddAuthorization(options =>
-        {
-            options.AddPolicy(FCGConstant.AdminRole, policy => policy.RequireRole(FCGConstant.AdminRole));
-            options.AddPolicy(FCGConstant.UserDefault, policy => policy.RequireRole(FCGConstant.UserDefault));
-        });
+        services.ConfigureAuthentication(configuration);
+
         services.AddControllers(options =>
         {
             options.Filters.Add<FluentValidationActionFilter>();
         });
+
         services.AddHttpContextAccessor();
+
         services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc("v1", new OpenApiInfo
@@ -104,6 +84,7 @@ public static class ProgramExtensions
         
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAcessService, AcessService>();
+        
         var loggerFactory = LoggerFactory.Create(builder =>
         {
             builder.AddConsole();
@@ -127,6 +108,7 @@ public static class ProgramExtensions
         services.AddScoped<IPasswordService, PasswordService>();
         services.AddScoped<IUserDomainService, UserDomainService>();
         services.AddScoped<IAcessDomainService, AcessDomainService>();
+
         return services;
     }
 
@@ -161,6 +143,8 @@ public static class ProgramExtensions
         }
 
         app.UseHttpsRedirection();
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.MapControllers();
 
         return app;
@@ -169,6 +153,34 @@ public static class ProgramExtensions
     public static IServiceCollection ConfigureSettings(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<FCGSettings>(configuration);
+
+        return services;
+    }
+
+    private static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = true;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = configuration["Jwt:Issuer"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+            };
+        });
+
+        services.AddAuthorizationBuilder()
+            .AddPolicy(FCGConstant.AdminRole, policy => policy.RequireRole(FCGConstant.AdminRole))
+            .AddPolicy(FCGConstant.UserDefault, policy => policy.RequireRole(FCGConstant.UserDefault));
 
         return services;
     }

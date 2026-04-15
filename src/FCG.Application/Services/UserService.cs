@@ -55,6 +55,7 @@ public class UserService : BaseApplicationService, IUserService
 
         var userMapped = _mapper.Map<User>(user);
         userMapped.Password = temporaryPassword;
+        
         var insertedUser = await _userDomainService.CreateUser(userMapped, FCGConstant.AdminRole);
         await UnitOfWork.CommitAsync();
 
@@ -130,11 +131,12 @@ public class UserService : BaseApplicationService, IUserService
         return new string(chars.ToArray());
     }
 
-    public async Task<bool> DeleteUser(Guid idUserToDeleted)
+    public async Task DeleteUser(Guid idUserToDeleted)
     {
-        if (!_userLogged.IsAdmin) return false;
+        if (!_userLogged.IsAdmin)
+            throw new UnauthorizedAccessException("Apenas administradores podem deletar usuários");
+
         await _userDomainService.DeleteUser(idUserToDeleted);
         await UnitOfWork.CommitAsync();
-        return true;
     }
 }

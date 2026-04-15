@@ -23,8 +23,9 @@ namespace FCG.Infrastructure.Authentication
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, userLogged.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new(ClaimTypes.NameIdentifier, userLogged.Id.ToString()),
+                new(JwtRegisteredClaimNames.Sub, userLogged.Id.ToString()),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 
             };
             foreach (var role in userLogged.Roles)
