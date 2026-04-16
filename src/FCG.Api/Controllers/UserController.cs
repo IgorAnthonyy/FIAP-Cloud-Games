@@ -44,6 +44,14 @@ public class UserController : BaseController
         return Ok(result);
     }
 
+    [HttpPut("change-password")]
+    [Authorize]
+    public async Task<IActionResult> ChangePassword([FromBody] RequestChangePassword request)
+    {
+        await _userService.ChangePassword(request);
+        return NoContent();
+    }
+
     [HttpDelete("{idUserToDeleted:guid}")]
     [Authorize(Policy = FCGConstant.AdminRole)]
     public async Task<IActionResult> DeleteUser([FromRoute] Guid idUserToDeleted)
