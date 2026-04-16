@@ -26,9 +26,30 @@ public class UserRepositoryBuild
         return this;
     }
 
+    public UserRepositoryBuild GetByEmailNull()
+    {
+        _repository.Setup(u => u.GetByEmail(It.IsAny<string>())).ReturnsAsync(null as User);
+
+        return this;
+    }
+
     public UserRepositoryBuild GetAll(User user)
     {
         _repository.Setup(u => u.GetAll()).ReturnsAsync([user]);
+
+        return this;
+    }
+
+    public UserRepositoryBuild Insert(User user)
+    {
+        _repository.Setup(u => u.Insert(It.IsAny<User>())).ReturnsAsync(user);
+
+        return this;
+    }
+
+    public UserRepositoryBuild Delete(User user)
+    {
+        _repository.Setup(u => u.Delete(It.IsAny<User>())).Returns(user);
 
         return this;
     }

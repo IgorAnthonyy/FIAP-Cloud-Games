@@ -1,7 +1,9 @@
-﻿namespace FCG.Tests.Fixture;
+﻿using CommonTestUtilities.Entities;
+
+namespace FCG.Tests.Fixture;
 
 [CollectionDefinition("UserFixtureCollection")]
-public class UserFixtureCollection : ICollectionFixture<UserFixture>
+public class UserFixtureCollection : ICollectionFixture<UserBuilder>
 {
 }
 

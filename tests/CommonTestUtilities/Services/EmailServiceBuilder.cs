@@ -1,4 +1,4 @@
-﻿using FCG.Domain.Entities;
+using FCG.Domain.Entities;
 using FCG.Domain.Enums;
 using FCG.Domain.Interfaces;
 using FCG.Domain.Views;
@@ -16,6 +16,9 @@ public class EmailServiceBuilder
                 It.IsAny<UserView>(),
                 It.IsAny<string>(),
                 It.IsAny<EmailOptions>()))
+            .ReturnsAsync(true);
+
+        mock.Setup(s => s.SendAsync(It.IsAny<UserView>()))
             .ReturnsAsync(true);
 
         return mock.Object;

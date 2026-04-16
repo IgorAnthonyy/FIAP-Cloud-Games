@@ -27,9 +27,9 @@ namespace FCG.Tests.Service;
 public class UserServiceTest
 {
 
-    public UserFixture _userFixture;
+    public UserBuilder _userFixture;
 
-    public UserServiceTest(UserFixture userFixture)
+    public UserServiceTest(UserBuilder userFixture)
     {
         _userFixture = userFixture;
     }
@@ -347,7 +347,7 @@ public class UserServiceTest
     public async Task ChangePassword_Sucess()
     {
         //Arrange
-        var user = UserBuilder.Build();
+        var user = _userFixture.GenerateUserWithRoleEmpty();
         var request = RequestChangePasswordBuilder.Build();
         var (userService, userDomainService) = CreateUseCase(user, false, request.Password);
 
@@ -363,7 +363,7 @@ public class UserServiceTest
     public async Task ChangePassword_Error_CurrentPassword_Different()
     {
         //Arrange
-        var user = UserBuilder.Build();
+        var user = _userFixture.GenerateUserWithRoleEmpty();
         var request = RequestChangePasswordBuilder.Build();
         var (userService, userDomainService) = CreateUseCase(user);
 

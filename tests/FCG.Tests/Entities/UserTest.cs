@@ -1,4 +1,5 @@
-﻿using FCG.Domain.Entities;
+﻿using CommonTestUtilities.Entities;
+using FCG.Domain.Entities;
 using FCG.Tests.Fixture;
 
 namespace FCG.Tests.Entities;
@@ -6,9 +7,9 @@ namespace FCG.Tests.Entities;
 [Collection(nameof(UserFixtureCollection))]
 public class UserTest
 {
-    public UserFixture _userFixture;
+    public UserBuilder _userFixture;
 
-    public UserTest(UserFixture userFixture)
+    public UserTest(UserBuilder userFixture)
     {
         _userFixture = userFixture;
     }
