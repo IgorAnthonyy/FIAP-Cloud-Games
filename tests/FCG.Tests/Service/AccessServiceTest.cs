@@ -1,13 +1,9 @@
-﻿using FCG.Domain.Interfaces;
-using FCG.Domain.Entities;
+﻿using FCG.Domain.Entities;
 using FCG.Domain.Interfaces.Respositories;
 using FCG.Domain.Services;
+using FCG.Infrastructure.Password;
 using FCG.Tests.Fixture;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using FCG.Infrastructure.Password;
 
 namespace FCG.Tests.Service
 {
