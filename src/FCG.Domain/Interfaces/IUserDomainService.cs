@@ -7,6 +7,8 @@ namespace FCG.Domain.Interfaces;
 public interface IUserDomainService
 {
     Task<User> CreateUser(User user, string role);
-
-    Task<bool> DeleteUser(Guid idUserToDeleted, string emailUserLogged);
+    Task DeleteUser(Guid idUserToDeleted);
+    Task<User> GetById(Guid id);
+    Task<User> GetByEmail(string email);
+    Task<User> UpdateUser(User user);
 }

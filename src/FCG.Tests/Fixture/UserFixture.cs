@@ -66,4 +66,16 @@ public class UserFixture
 
         return new User { Name = name, Email = email, Password = password, Phone = phone, BirthDate = birthDate, Situation = situation, Roles = [new Role { Name = FCGConstant.UserDefault }] };
     }
+
+    public User GenerateUserLogin(string hashPassword)
+    {
+        string name = _faker.Name.FullName();
+        var email = new Email("teste@teste.com");
+        string phone = _faker.Phone.PhoneNumber();
+        string cpf = _faker.Person.Cpf();
+        DateTime birthDate = _faker.Date.Past(50, DateTime.Now.AddYears(-20));
+        bool situation = _faker.Random.Bool();
+
+        return new User { Name = name, Email = email, Password = hashPassword, Phone = phone, BirthDate = birthDate, Situation = situation, Roles = [new Role { Name = FCGConstant.UserDefault }] };
+    }
 }

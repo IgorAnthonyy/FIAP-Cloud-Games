@@ -1,8 +1,7 @@
-﻿using FCG.Application.Interfaces;
+﻿using FCG.Domain.Interfaces;
 using FCG.Domain.Contants;
 using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
-using FCG.Domain.Interfaces;
 using FCG.Domain.Interfaces.Respositories;
 using FCG.Domain.ValueObjects;
 using System;
@@ -14,9 +13,9 @@ namespace FCG.Domain.Services;
 public class UserDomainService : IUserDomainService
 {
     private readonly IUserRepository _userRepository;
-    private readonly IPasswordHashService _passwordHashService;
+    private readonly IPasswordService _passwordHashService;
 
-    public UserDomainService(IUserRepository userRepository, IPasswordHashService passwordHashService)
+    public UserDomainService(IUserRepository userRepository, IPasswordService passwordHashService)
     {
         _userRepository = userRepository;
         _passwordHashService = passwordHashService;
@@ -37,12 +36,8 @@ public class UserDomainService : IUserDomainService
         return insertedUser;
     }
 
-    public async Task<bool> DeleteUser(Guid idUserToDeleted, string emailUserLogged)
+    public async Task DeleteUser(Guid idUserToDeleted)
     {
-        User userLogged = await _userRepository.GetByEmail(emailUserLogged);
-        if(userLogged == null) throw new BusinessException("Usuário logado não encontrado");
-
-        if(!userLogged.IsAdmin()) return false;
 
         User userToDeleted = await _userRepository.GetById(idUserToDeleted);
 
@@ -50,7 +45,30 @@ public class UserDomainService : IUserDomainService
 
         _userRepository.Delete(userToDeleted);
 
-        return true;
+    }
+    
+    public async Task<User> GetById(Guid id)
+    {
+        return await _userRepository.GetById(id);
+    }
+    
+    public async Task<User> GetByEmail(string email)
+    {
+        return await _userRepository.GetByEmail(email);
+    }
+    
+    public async Task<User> UpdateUser(User user)
+    {
+        User userToUpdate = await _userRepository.GetById(user.Id);
+        if (userToUpdate == null)
+            throw new BusinessException("Usuário não encontrado");
 
+        userToUpdate.Name = user.Name;
+        userToUpdate.Phone = user.Phone;
+        userToUpdate.BirthDate = user.BirthDate;
+
+        _userRepository.Update(userToUpdate);
+
+        return userToUpdate;
     }
 }

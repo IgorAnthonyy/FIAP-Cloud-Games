@@ -48,13 +48,13 @@ public class UserServiceTest
         User usuarioASerCriado = GetUser("teste@email.com");
         var uowMock = new Mock<IUnitOfWork>();
         var emailMock = new Mock<IEmailService>();
-        var passwordServiceMock = new Mock<IPasswordHashService>();
+        var passwordServiceMock = new Mock<IPasswordService>();
         var userRepositoryMock = new Mock<IUserRepository>();
         var roleRepositoryMock = new Mock<IRoleRepository>();
         var mapperMock = new Mock<IMapper>();
         var userLoggedMock = new Mock<IUserLogged>();
 
-        userLoggedMock.Setup(ul => ul.UserEmail).Returns("");
+        userLoggedMock.Setup(ul => ul.IsAdmin).Returns(false);
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(null as User);
         emailMock.Setup(e => e.SendAsync(It.IsAny<UserView>())).ReturnsAsync(true);
@@ -107,13 +107,13 @@ public class UserServiceTest
         User userRemove = _userFixture.GenerateUserWithRoleEmpty();
         var uowMock = new Mock<IUnitOfWork>();
         var emailMock = new Mock<IEmailService>();
-        var passwordServiceMock = new Mock<IPasswordHashService>();
+        var passwordServiceMock = new Mock<IPasswordService>();
         var userRepositoryMock = new Mock<IUserRepository>();
         var roleRepositoryMock = new Mock<IRoleRepository>();
         var mapperMock = new Mock<IMapper>();
         var userLoggedMock = new Mock<IUserLogged>();
 
-        userLoggedMock.Setup(ul => ul.UserEmail).Returns(userAdmin.Email.Value);
+        userLoggedMock.Setup(ul => ul.IsAdmin).Returns(true);
 
 
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
@@ -132,11 +132,10 @@ public class UserServiceTest
         var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService, userLoggedMock.Object);
 
         //Act
-        bool userDeleted = await userService.DeleteUser(userRemove.Id);
+        await userService.DeleteUser(userRemove.Id);
 
         userRepositoryMock.Verify(r => r.Delete(It.IsAny<User>()), Times.Once);
         uowMock.Verify(u => u.CommitAsync(), Times.Once);
-        Assert.True(userDeleted);
     }
 
 
@@ -148,13 +147,13 @@ public class UserServiceTest
         User userRemove = _userFixture.GenerateUserWithRoleEmpty();
         var uowMock = new Mock<IUnitOfWork>();
         var emailMock = new Mock<IEmailService>();
-        var passwordServiceMock = new Mock<IPasswordHashService>();
+        var passwordServiceMock = new Mock<IPasswordService>();
         var userRepositoryMock = new Mock<IUserRepository>();
         var roleRepositoryMock = new Mock<IRoleRepository>();
         var mapperMock = new Mock<IMapper>();
         var userLoggedMock = new Mock<IUserLogged>();
 
-        userLoggedMock.Setup(ul => ul.UserEmail).Returns(userAdmin.Email.Value);
+        userLoggedMock.Setup(ul => ul.IsAdmin).Returns(true);
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(userAdmin);
 
@@ -183,13 +182,13 @@ public class UserServiceTest
         User userRemove = _userFixture.GenerateUserWithRoleEmpty();
         var uowMock = new Mock<IUnitOfWork>();
         var emailMock = new Mock<IEmailService>();
-        var passwordServiceMock = new Mock<IPasswordHashService>();
+        var passwordServiceMock = new Mock<IPasswordService>();
         var userRepositoryMock = new Mock<IUserRepository>();
         var roleRepositoryMock = new Mock<IRoleRepository>();
         var mapperMock = new Mock<IMapper>();
         var userLoggedMock = new Mock<IUserLogged>();
 
-        userLoggedMock.Setup(ul => ul.UserEmail).Returns(userAdmin.Email.Value);
+        userLoggedMock.Setup(ul => ul.IsAdmin).Returns(false);
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(userAdmin);
         userRepositoryMock.Setup(u => u.GetById(It.IsAny<Guid>()))
@@ -207,46 +206,11 @@ public class UserServiceTest
 
 
         //Act
-        bool userDeleted = await userService.DeleteUser(userRemove.Id);
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => userService.DeleteUser(userRemove.Id));
 
-        Assert.False(userDeleted);
+        userRepositoryMock.Verify(r => r.Delete(It.IsAny<User>()), Times.Never);
+        uowMock.Verify(u => u.CommitAsync(), Times.Never);
     }
-
-    [Fact]
-    public async Task UserEntityLogged_ShouldThrow_NotFoundLoggedUserException()
-    {
-        //Arrange
-        User userAdmin = _userFixture.GenerateUserWithRoles();
-        User userRemove = _userFixture.GenerateUserWithRoleEmpty();
-        var uowMock = new Mock<IUnitOfWork>();
-        var emailMock = new Mock<IEmailService>();
-        var passwordServiceMock = new Mock<IPasswordHashService>();
-        var userRepositoryMock = new Mock<IUserRepository>();
-        var roleRepositoryMock = new Mock<IRoleRepository>();
-        var mapperMock = new Mock<IMapper>();
-        var userLoggedMock = new Mock<IUserLogged>();
-
-        userLoggedMock.Setup(ul => ul.UserEmail).Returns(userAdmin.Email.Value);
-        userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
-                          .ReturnsAsync(null as User);
-
-        userRepositoryMock.Setup(u => u.GetById(It.IsAny<Guid>()))
-                          .ReturnsAsync(userRemove);
-
-        userRepositoryMock
-            .Setup(r => r.Delete(It.IsAny<User>()))
-            .Returns(userRemove);
-
-
-        var userDomainService = new UserDomainService(userRepositoryMock.Object, passwordServiceMock.Object);
-
-        var userService = new UserService(uowMock.Object, mapperMock.Object, emailMock.Object, userDomainService, userLoggedMock.Object);
-
-
-        //Act
-        await Assert.ThrowsAsync<BusinessException>(() => userService.DeleteUser(userRemove.Id));
-    }
-
 
     [Fact]
     public async Task UserEntity_ShouldThrow_FoundUserException()
@@ -255,13 +219,13 @@ public class UserServiceTest
         User usuarioASerCriado = GetUser("teste@email.com");
         var uowMock = new Mock<IUnitOfWork>();
         var emailMock = new Mock<IEmailService>();
-        var passwordServiceMock = new Mock<IPasswordHashService>();
+        var passwordServiceMock = new Mock<IPasswordService>();
         var userRepositoryMock = new Mock<IUserRepository>();
         var roleRepositoryMock = new Mock<IRoleRepository>();
         var mapperMock = new Mock<IMapper>();
         var userLoggedMock = new Mock<IUserLogged>();
 
-        userLoggedMock.Setup(ul => ul.UserEmail).Returns("");
+        userLoggedMock.Setup(ul => ul.IsAdmin).Returns(false);
         emailMock.Setup(e => e.SendAsync(It.IsAny<UserView>())).ReturnsAsync(true);
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(GetUser("teste@email.com"));
@@ -306,12 +270,12 @@ public class UserServiceTest
         //Arrange
         var uowMock = new Mock<IUnitOfWork>();
         var emailMock = new Mock<IEmailService>();
-        var passwordServiceMock = new Mock<IPasswordHashService>();
+        var passwordServiceMock = new Mock<IPasswordService>();
         var userRepositoryMock = new Mock<IUserRepository>();
         var mapperMock = new Mock<IMapper>();
         var userLoggedMock = new Mock<IUserLogged>();
 
-        userLoggedMock.Setup(ul => ul.UserEmail).Returns("");
+        userLoggedMock.Setup(ul => ul.IsAdmin).Returns(true);
         User? insertedUserCapture = null;
 
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))

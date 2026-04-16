@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
@@ -18,8 +19,6 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<None Include="..\FCG.Infrastructure\Email\Hbs\email.hbs"
-			  Link="Email\Hbs\email.hbs"
-			  CopyToOutputDirectory="Always" />
+		<None Include="..\FCG.Infrastructure\Email\Hbs\email.hbs" Link="Email\Hbs\email.hbs" CopyToOutputDirectory="Always" />
 	</ItemGroup>
 </Project>

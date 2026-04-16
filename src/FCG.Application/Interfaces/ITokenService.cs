@@ -5,12 +5,8 @@ using System.Text;
 
 namespace FCG.Application.Interfaces
 {
-    public interface IUserLogged
+    public interface ITokenService
     {
-        Guid UserId{ get; }
-
-        List<Role> Roles { get; }
-
-        bool IsAdmin { get; }
+        string GenerateTokenJWT(User userLogged);
     }
 }

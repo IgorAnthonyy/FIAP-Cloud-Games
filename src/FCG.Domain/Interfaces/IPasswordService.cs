@@ -1,6 +1,6 @@
-﻿namespace FCG.Application.Interfaces;
+﻿namespace FCG.Domain.Interfaces;
 
-public interface IPasswordHashService
+public interface IPasswordService
 {
     string GenerateHash(string password);
     bool VerifyPassword(string hash, string password);

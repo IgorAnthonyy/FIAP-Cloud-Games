@@ -23,21 +23,30 @@ using Microsoft.OpenApi;
 using FCG.Infrastructure.Email.Service;
 using FCG.Domain.Interfaces.Respositories;
 using FCG.Infrastructure.Password;
-using FCG.Infrastructure.Security;
+using FCG.Infrastructure.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using FCG.Domain.Contants;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System;
 
 namespace FCG.Api.Extensions;
 
 public static class ProgramExtensions
 {
-    public static IServiceCollection ConfigureApi(this IServiceCollection services)
+    public static IServiceCollection ConfigureApi(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<FluentValidationActionFilter>();
+
+        services.ConfigureAuthentication(configuration);
 
         services.AddControllers(options =>
         {
             options.Filters.Add<FluentValidationActionFilter>();
         });
+
         services.AddHttpContextAccessor();
+
         services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc("v1", new OpenApiInfo
@@ -50,6 +59,19 @@ public static class ProgramExtensions
                     Name = "FIAP Cloud Games"
                 }
             });
+
+            options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT",
+                Description = "JWT Authorization header using the Bearer scheme."
+            });
+
+            options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference("bearer", document)] = []
+            });
         });
 
         return services;
@@ -61,6 +83,7 @@ public static class ProgramExtensions
         services.AddScoped<IValidator<AdminCreate>, AdminValidator>();
         
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAccessService, AccessService>();
         
         var loggerFactory = LoggerFactory.Create(builder =>
         {
@@ -82,9 +105,10 @@ public static class ProgramExtensions
 
     public static IServiceCollection ConfigureDomain(this IServiceCollection services)
     {
-        services.AddScoped<IPasswordHashService, PasswordHashService>();
+        services.AddScoped<IPasswordService, PasswordService>();
         services.AddScoped<IUserDomainService, UserDomainService>();
-        
+        services.AddScoped<IAccessDomainService, AccessDomainService>();
+
         return services;
     }
 
@@ -100,6 +124,7 @@ public static class ProgramExtensions
 
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IUserLogged, UserLogged>();
+        services.AddScoped<ITokenService, TokenService>();
         return services;
     }
 
@@ -118,6 +143,8 @@ public static class ProgramExtensions
         }
 
         app.UseHttpsRedirection();
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.MapControllers();
 
         return app;
@@ -126,6 +153,34 @@ public static class ProgramExtensions
     public static IServiceCollection ConfigureSettings(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<FCGSettings>(configuration);
+
+        return services;
+    }
+
+    private static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = true;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = configuration["Jwt:Issuer"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+            };
+        });
+
+        services.AddAuthorizationBuilder()
+            .AddPolicy(FCGConstant.AdminRole, policy => policy.RequireRole(FCGConstant.AdminRole))
+            .AddPolicy(FCGConstant.UserDefault, policy => policy.RequireRole(FCGConstant.UserDefault));
 
         return services;
     }
