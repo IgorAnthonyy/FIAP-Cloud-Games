@@ -83,7 +83,7 @@ public static class ProgramExtensions
         services.AddScoped<IValidator<AdminCreate>, AdminValidator>();
         
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IAcessService, AcessService>();
+        services.AddScoped<IAccessService, AccessService>();
         
         var loggerFactory = LoggerFactory.Create(builder =>
         {
@@ -107,7 +107,7 @@ public static class ProgramExtensions
     {
         services.AddScoped<IPasswordService, PasswordService>();
         services.AddScoped<IUserDomainService, UserDomainService>();
-        services.AddScoped<IAcessDomainService, AcessDomainService>();
+        services.AddScoped<IAccessDomainService, AccessDomainService>();
 
         return services;
     }

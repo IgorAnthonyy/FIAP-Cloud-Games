@@ -13,17 +13,17 @@ namespace FCG.Tests.Service
 {
 
     [Collection(nameof(UserFixtureCollection))]
-    public class AcessoServiceTest
+    public class AccessServiceTest
     {
         public UserFixture _userFixture;
 
-        public AcessoServiceTest(UserFixture userFixture)
+        public AccessServiceTest(UserFixture userFixture)
         {
             _userFixture = userFixture;
         }
 
         [Fact]
-        public async Task AcessoService_Should_LoginSucessAndReturnToken()
+        public async Task AccessService_Should_LoginSucessAndReturnToken()
         {
             //Arrange
 
@@ -35,8 +35,8 @@ namespace FCG.Tests.Service
             userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                          .ReturnsAsync(userToLogin);
 
-            var acessoDomainService = new AcessDomainService(userRepositoryMock.Object, passwordServiceMock);
-            var token = await acessoDomainService.Login(userToLogin.Email, new Domain.ValueObjects.Password(passwordTest));
+            var accessDomainService = new AccessDomainService(userRepositoryMock.Object, passwordServiceMock);
+            var token = await accessDomainService.Login(userToLogin.Email, new Domain.ValueObjects.Password(passwordTest));
 
             Assert.IsType<User>(token);
         }

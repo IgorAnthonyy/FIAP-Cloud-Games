@@ -11,18 +11,18 @@ namespace FCG.Infrastructure.Authentication;
 
 public class UserLogged : IUserLogged
 {
-    private readonly IHttpContextAccessor _httpContextAcessor;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public UserLogged(IHttpContextAccessor httpContextAcessor)
+    public UserLogged(IHttpContextAccessor httpContextAccessor)
     {
-        _httpContextAcessor = httpContextAcessor;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public Guid UserId
     {
         get
         {
-            var principal = _httpContextAcessor.HttpContext?.User;
+            var principal = _httpContextAccessor.HttpContext?.User;
             var userIdClaim = principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value
                 ?? principal?.FindFirst("sub")?.Value;
 
@@ -33,12 +33,12 @@ public class UserLogged : IUserLogged
         }
     }
 
-    public List<Role> Roles => [.. (_httpContextAcessor.HttpContext?.User?.FindAll(ClaimTypes.Role) ?? [])
+    public List<Role> Roles => [.. (_httpContextAccessor.HttpContext?.User?.FindAll(ClaimTypes.Role) ?? [])
             .Select(r => new Role
             {
                 Name = r.Value,
             })];
 
-    public bool IsAdmin => (_httpContextAcessor.HttpContext?.User?.FindAll(ClaimTypes.Role) ?? [])
+    public bool IsAdmin => (_httpContextAccessor.HttpContext?.User?.FindAll(ClaimTypes.Role) ?? [])
         .Any(r => string.Equals(r.Value, FCGConstant.AdminRole, StringComparison.OrdinalIgnoreCase));
 }

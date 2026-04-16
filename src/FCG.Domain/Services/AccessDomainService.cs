@@ -1,21 +1,18 @@
-﻿using FCG.Domain.Interfaces;
-using FCG.Domain.Entities;
+﻿using FCG.Domain.Entities;
 using FCG.Domain.Exceptions;
+using FCG.Domain.Interfaces;
 using FCG.Domain.Interfaces.Respositories;
 using FCG.Domain.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FCG.Domain.Services
 {
-    public class AcessDomainService : IAcessDomainService
+    public class AccessDomainService : IAccessDomainService
     {
         private readonly IUserRepository _userRepository;
         private readonly IPasswordService _passwordService;
         
-        public AcessDomainService(IUserRepository userRepository, IPasswordService passwordService)
+        public AccessDomainService(IUserRepository userRepository, IPasswordService passwordService)
         {
             _userRepository = userRepository;
             _passwordService = passwordService;

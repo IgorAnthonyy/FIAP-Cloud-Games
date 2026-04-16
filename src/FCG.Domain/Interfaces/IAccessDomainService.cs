@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FCG.Domain.Interfaces;
 
-public interface IAcessDomainService
+public interface IAccessDomainService
 {
     Task<User> Login(Email email, Password password);
 }

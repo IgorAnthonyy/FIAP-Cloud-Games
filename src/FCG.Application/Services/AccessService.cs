@@ -3,29 +3,26 @@ using FCG.Application.Interfaces;
 using FCG.Domain.Entities;
 using FCG.Domain.Interfaces;
 using FCG.Domain.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FCG.Application.Services
 {
-    public class AcessService : IAcessService
+    public class AccessService : IAccessService
     {
         private readonly ITokenService _tokenService;
-        private readonly IAcessDomainService _acessDomainService;
-        public AcessService(ITokenService tokenService, IAcessDomainService acessDomainService)
+        private readonly IAccessDomainService _accessDomainService;
+        public AccessService(ITokenService tokenService, IAccessDomainService accessDomainService)
         {
             _tokenService = tokenService;
-            _acessDomainService = acessDomainService;
+            _accessDomainService = accessDomainService;
         }
 
-        public async Task<string> Login(AcessLogin login)
+        public async Task<string> Login(AccessLogin login)
         {
             var email = new Email(login.Email);
             var password = new Password(login.Password);
 
-            User userTryingLogin = await _acessDomainService.Login(email, password);
+            User userTryingLogin = await _accessDomainService.Login(email, password);
 
             return _tokenService.GenerateTokenJWT(userTryingLogin);
         }
