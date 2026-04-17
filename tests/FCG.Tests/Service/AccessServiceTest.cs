@@ -1,13 +1,10 @@
-﻿using FCG.Domain.Interfaces;
+﻿using CommonTestUtilities.Entities;
 using FCG.Domain.Entities;
 using FCG.Domain.Interfaces.Respositories;
 using FCG.Domain.Services;
+using FCG.Infrastructure.Password;
 using FCG.Tests.Fixture;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using FCG.Infrastructure.Password;
 
 namespace FCG.Tests.Service
 {
@@ -15,9 +12,9 @@ namespace FCG.Tests.Service
     [Collection(nameof(UserFixtureCollection))]
     public class AccessServiceTest
     {
-        public UserFixture _userFixture;
+        public UserBuilder _userFixture;
 
-        public AccessServiceTest(UserFixture userFixture)
+        public AccessServiceTest(UserBuilder userFixture)
         {
             _userFixture = userFixture;
         }

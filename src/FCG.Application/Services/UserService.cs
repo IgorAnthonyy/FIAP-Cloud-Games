@@ -7,11 +7,8 @@ using FCG.Domain.Exceptions;
 using FCG.Domain.Interfaces;
 using FCG.Domain.Interfaces.Respositories;
 using FCG.Domain.Views;
-using Microsoft.IdentityModel.JsonWebTokens;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
@@ -23,16 +20,20 @@ public class UserService : BaseApplicationService, IUserService
     private readonly IUserDomainService _userDomainService;
     private readonly IMapper _mapper;
     private readonly IUserLogged _userLogged;
+    private readonly IPasswordService _passwordService;
+
     public UserService(IUnitOfWork unitOfWork,
         IMapper mapper,
         IEmailService emailService,
         IUserDomainService userDomainService,
-        IUserLogged userLogged) : base(unitOfWork)
+        IUserLogged userLogged,
+        IPasswordService passwordService) : base(unitOfWork)
     {
         _mapper = mapper;
         _emailService = emailService;
         _userDomainService = userDomainService;
         _userLogged = userLogged;
+        _passwordService = passwordService;
     }
 
     public async Task<UserResponse> CreateUser(UserCreate user)
@@ -99,7 +100,29 @@ public class UserService : BaseApplicationService, IUserService
 
         return _mapper.Map<UserResponse>(userToUpdate);
     }
-    
+
+    public async Task ChangePassword(RequestChangePassword request)
+    {
+        var loggedId = _userLogged.UserId;
+        var loggedUser = await _userDomainService.GetById(loggedId);
+
+        var passwordMatch = _passwordService.VerifyPassword(loggedUser.Password, request.Password);
+
+        if (!passwordMatch)
+            throw new BusinessException("A senha inserida é diferente da senha atual");
+
+        await _userDomainService.ChangePassword(loggedId, request.NewPassword);
+        await UnitOfWork.CommitAsync();
+    }
+
+    public async Task DeleteUser(Guid idUserToDeleted)
+    {
+        if (!_userLogged.IsAdmin)
+            throw new UnauthorizedAccessException("Apenas administradores podem deletar usuários");
+
+        await _userDomainService.DeleteUser(idUserToDeleted);
+        await UnitOfWork.CommitAsync();
+    }
 
     private static string GenerateTemporaryPassword(int length = 12)
     {
@@ -129,14 +152,5 @@ public class UserService : BaseApplicationService, IUserService
         }
 
         return new string(chars.ToArray());
-    }
-
-    public async Task DeleteUser(Guid idUserToDeleted)
-    {
-        if (!_userLogged.IsAdmin)
-            throw new UnauthorizedAccessException("Apenas administradores podem deletar usuários");
-
-        await _userDomainService.DeleteUser(idUserToDeleted);
-        await UnitOfWork.CommitAsync();
     }
 }

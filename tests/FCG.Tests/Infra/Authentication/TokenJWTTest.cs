@@ -1,22 +1,19 @@
-﻿using FCG.Application.Interfaces;
+﻿using CommonTestUtilities.Entities;
 using FCG.Domain.Contants;
 using FCG.Domain.Entities;
 using FCG.Infrastructure.Authentication;
 using FCG.Tests.Fixture;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 namespace FCG.Tests.Infra.Authentication
 {
     [Collection(nameof(UserFixtureCollection))]
     public class TokenJWTTest
     {
-        public UserFixture _userFixture;
-        public TokenJWTTest(UserFixture userFixture)
+        public UserBuilder _userFixture;
+        public TokenJWTTest(UserBuilder userFixture)
         {
             _userFixture = userFixture;
         }

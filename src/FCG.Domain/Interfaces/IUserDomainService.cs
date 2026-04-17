@@ -11,4 +11,6 @@ public interface IUserDomainService
     Task<User> GetById(Guid id);
     Task<User> GetByEmail(string email);
     Task<User> UpdateUser(User user);
+    Task ChangePassword(Guid idUser, string newPassword);
+
 }

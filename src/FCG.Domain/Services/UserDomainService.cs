@@ -71,4 +71,12 @@ public class UserDomainService : IUserDomainService
 
         return userToUpdate;
     }
+
+    public async Task ChangePassword(Guid idUser, string newPassword)
+    {
+        User userToChangePassword = await _userRepository.GetById(idUser) ?? throw new BusinessException("Usuário não encontrado");
+        userToChangePassword.Password = _passwordHashService.GenerateHash(newPassword);
+
+        _userRepository.Update(userToChangePassword);
+    }
 }

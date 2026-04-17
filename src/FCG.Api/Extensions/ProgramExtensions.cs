@@ -1,34 +1,33 @@
 using AutoMapper;
+using FCG.Api.Filters;
+using FCG.Api.Middlewares;
 using FCG.Application.DTOs;
 using FCG.Application.Interfaces;
 using FCG.Application.Mapper;
 using FCG.Application.Services;
 using FCG.Application.Validator;
+using FCG.Domain.Contants;
 using FCG.Domain.Interfaces;
+using FCG.Domain.Interfaces.Respositories;
 using FCG.Domain.Services;
+using FCG.Infrastructure.Authentication;
 using FCG.Infrastructure.Data;
+using FCG.Infrastructure.Email.Service;
+using FCG.Infrastructure.Password;
 using FCG.Infrastructure.Persistence;
 using FCG.Infrastructure.Repositories;
 using FCG.Infrastructure.Settings;
-using FCG.Api.Middlewares;
-using FCG.Api.Filters;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi;
-using FCG.Infrastructure.Email.Service;
-using FCG.Domain.Interfaces.Respositories;
-using FCG.Infrastructure.Password;
-using FCG.Infrastructure.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using FCG.Domain.Contants;
-using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using System;
+using Microsoft.OpenApi;
+using System.Text;
 
 namespace FCG.Api.Extensions;
 
@@ -81,7 +80,8 @@ public static class ProgramExtensions
     {
         services.AddScoped<IValidator<UserCreate>, UserValidator>();
         services.AddScoped<IValidator<AdminCreate>, AdminValidator>();
-        
+        services.AddScoped<IValidator<RequestChangePassword>, ChangePasswordValidator>();
+
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAccessService, AccessService>();
         
