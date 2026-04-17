@@ -13,6 +13,7 @@ using FCG.Domain.Services;
 using FCG.Infrastructure.Authentication;
 using FCG.Infrastructure.Data;
 using FCG.Infrastructure.Email.Service;
+using FCG.Infrastructure.Log;
 using FCG.Infrastructure.Password;
 using FCG.Infrastructure.Persistence;
 using FCG.Infrastructure.Repositories;
@@ -25,6 +26,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Text;
@@ -43,7 +45,7 @@ public static class ProgramExtensions
         {
             options.Filters.Add<FluentValidationActionFilter>();
         });
-
+        
         services.AddHttpContextAccessor();
 
         services.AddSwaggerGen(options =>
@@ -71,6 +73,7 @@ public static class ProgramExtensions
             {
                 [new OpenApiSecuritySchemeReference("bearer", document)] = []
             });
+            options.OperationFilter<CorrelationIdHeaderFilter>();
         });
 
         return services;
@@ -118,11 +121,11 @@ public static class ProgramExtensions
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
 
         services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<ICorrelationIdGenerator, CorrelationIdGenerator>();
         services.AddScoped<IUserLogged, UserLogged>();
         services.AddScoped<ITokenService, TokenService>();
         return services;
@@ -130,7 +133,9 @@ public static class ProgramExtensions
 
     public static WebApplication ConfigureMiddleware(this WebApplication app)
     {
+        app.UseMiddleware<CorrelationMiddleware>();
         app.UseMiddleware<GlobalExceptionMiddleware>();
+        app.UseMiddleware<LogMiddleware>();
 
         if (app.Environment.IsDevelopment())
         {
@@ -184,4 +189,5 @@ public static class ProgramExtensions
 
         return services;
     }
+    
 }

@@ -117,6 +117,8 @@ public class UserService : BaseApplicationService, IUserService
 
     public async Task DeleteUser(Guid idUserToDeleted)
     {
+        if (idUserToDeleted == _userLogged.UserId) throw new BusinessException("Você está tentando se apagar do sistema, caso queira que isso aconteça solicite isso para algum administrador");
+
         if (!_userLogged.IsAdmin)
             throw new UnauthorizedAccessException("Apenas administradores podem deletar usuários");
 
