@@ -50,6 +50,7 @@ public class UserBuilder
         var passwordEncripter = new PasswordServiceBuilder().Build();
 
         var user = new Faker<User>("pt_BR")
+            .RuleFor(u => u.Id, faker => faker.Random.Guid())
             .RuleFor(u => u.Name, faker => faker.Person.FirstName)
             .RuleFor(u => u.Email, (faker, user) => new Email(faker.Internet.Email(user.Name)))
             .RuleFor(u => u.Password, (_, user) => passwordEncripter.GenerateHash(user.Password))
