@@ -374,13 +374,13 @@ public class UserServiceTest
         var result = await act.ShouldThrowAsync<BusinessException>();
     }
 
-    private static (UserService userService, UserDomainService userDomainService) CreateUseCase(User user, bool isAdmin = false, string? password = null)
+    private static (UserService userService, UserDomainService userDomainService) CreateUseCase(User user, bool isAdmin = false, string? password = null, User? targetUser = null)
     {
         var unitOfWork = UnitOfWorkBuilder.Build();
         var mapper = MapperBuilder.Build();
         var emailService = EmailServiceBuilder.Build(user);
         var passwordEncripter = new PasswordServiceBuilder().VerifyPassword(password).Build();
-        var userRepositoryMock = new UserRepositoryBuild().GetByEmail(user).GetById(user).Build();
+        var userRepositoryMock = new UserRepositoryBuild().GetByEmail(user).GetById(targetUser ?? user).Build();
         var loggedUser = isAdmin ? UserLoggedBuilder.BuildAdmin(user) : UserLoggedBuilder.Build(user);
 
 
@@ -388,5 +388,52 @@ public class UserServiceTest
         var userService = new UserService(unitOfWork, mapper, emailService, userDomainService, loggedUser, passwordEncripter);
 
         return (userService, userDomainService);
+    }
+
+    [Fact]
+    public async Task UpdateUser_Admin_Deve_Editar_Qualquer_Usuario()
+    {
+        // Arrange
+        var admin = _userFixture.GenerateUserWithRoleAdmin();
+        var user = _userFixture.GenerateUserWithRoleEmpty();
+
+        var request = new UserUpdate
+        {
+            Id = user.Id,
+            Name = "Novo Nome",
+            Phone = "999999",
+            BirthDate = DateTime.Now,
+            Situation = false
+        };
+
+        var (userService, _) = CreateUseCase(admin, true);
+
+        // Act
+        var result = await userService.UpdateUser(request);
+
+        // Assert
+        result.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public async Task UpdateUser_Usuario_Comum_Nao_Pode_Editar_Outro()
+    {
+        // Arrange
+        var userLogado = _userFixture.GenerateUserWithRolesDefault();
+        var outroUsuario = _userFixture.GenerateUserWithRoleEmpty();
+
+        var request = new UserUpdate
+        {
+            Id = outroUsuario.Id,
+            Name = "Novo Nome"
+        };
+
+        var (userService, _) = CreateUseCase(userLogado, targetUser: outroUsuario);
+
+        // Act
+        var act = async () => await userService.UpdateUser(request);
+
+        // Assert
+        await act.ShouldThrowAsync<BusinessException>();
     }
 }

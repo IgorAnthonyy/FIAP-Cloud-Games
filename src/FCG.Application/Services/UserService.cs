@@ -72,16 +72,11 @@ public class UserService : BaseApplicationService, IUserService
     {
         var loggedId = _userLogged.UserId;
 
-        var loggedUser = await _userDomainService.GetById(loggedId);
-
         var userToUpdate = await _userDomainService.GetById(user.Id);
-
-        if (userToUpdate == null)
-            throw new BusinessException("Usuário não encontrado");
 
         bool isAdmin = _userLogged.IsAdmin;
 
-        if (!isAdmin && loggedUser.Id != user.Id)
+        if (!isAdmin && loggedId != user.Id)
             throw new BusinessException("Você não tem permissão para editar este usuário");
 
         if (user.Situation.HasValue && !isAdmin)
@@ -95,7 +90,6 @@ public class UserService : BaseApplicationService, IUserService
             userToUpdate.Situation = user.Situation.Value;
 
         await _userDomainService.UpdateUser(userToUpdate);
-
         await UnitOfWork.CommitAsync();
 
         return _mapper.Map<UserResponse>(userToUpdate);
