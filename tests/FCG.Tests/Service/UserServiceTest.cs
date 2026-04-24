@@ -390,7 +390,7 @@ public class UserServiceTest
         //Arrange
         var user = _userFixture.GenerateUserWithRoleEmpty();
         var request = RequestChangePasswordBuilder.Build();
-        var (userService, userDomainService) = CreateUseCase(user, false, request.Password);
+        var (userService, userDomainService) = UserServiceBuilder.CreateUseCase(user, false, request.Password);
 
         //Act
         var act = async () => await userService.ChangePassword(request);
@@ -406,7 +406,7 @@ public class UserServiceTest
         //Arrange
         var user = _userFixture.GenerateUserWithRoleEmpty();
         var request = RequestChangePasswordBuilder.Build();
-        var (userService, userDomainService) = CreateUseCase(user);
+        var (userService, userDomainService) = UserServiceBuilder.CreateUseCase(user);
 
         //Act
         var act = async () => await userService.ChangePassword(request);
@@ -415,21 +415,7 @@ public class UserServiceTest
         var result = await act.ShouldThrowAsync<BusinessException>();
     }
 
-    private static (UserService userService, UserDomainService userDomainService) CreateUseCase(User user, bool isAdmin = false, string? password = null, User? targetUser = null)
-    {
-        var unitOfWork = UnitOfWorkBuilder.Build();
-        var mapper = MapperBuilder.Build();
-        var emailService = EmailServiceBuilder.Build(user);
-        var passwordEncripter = new PasswordServiceBuilder().VerifyPassword(password).Build();
-        var userRepositoryMock = new UserRepositoryBuild().GetByEmail(user).GetById(targetUser ?? user).Build();
-        var loggedUser = isAdmin ? UserLoggedBuilder.BuildAdmin(user) : UserLoggedBuilder.Build(user);
-
-
-        var userDomainService = new UserDomainService(userRepositoryMock, passwordEncripter);
-        var userService = new UserService(unitOfWork, mapper, emailService, userDomainService, loggedUser, passwordEncripter);
-
-        return (userService, userDomainService);
-    }
+    
 
     [Fact]
     public async Task UpdateUser_Admin_Deve_Editar_Qualquer_Usuario()
@@ -447,7 +433,7 @@ public class UserServiceTest
             Situation = false
         };
 
-        var (userService, _) = CreateUseCase(admin, true);
+        var (userService, _) = UserServiceBuilder.CreateUseCase(admin, true);
 
         // Act
         var result = await userService.UpdateUser(request);
@@ -469,7 +455,7 @@ public class UserServiceTest
             Name = "Novo Nome"
         };
 
-        var (userService, _) = CreateUseCase(userLogado, targetUser: outroUsuario);
+        var (userService, _) = UserServiceBuilder.CreateUseCase(userLogado, targetUser: outroUsuario);
 
         // Act
         var act = async () => await userService.UpdateUser(request);
