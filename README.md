@@ -48,7 +48,7 @@ Antes de começar, você precisa ter instalado:
 
 ```bash
 git clone https://github.com/IgorAnthonyy/FIAP-Cloud-Games.git
-cd sua-api
+cd FIAP-Cloud-Games
 ```
 
 ### 2. Configurar variáveis de ambiente
