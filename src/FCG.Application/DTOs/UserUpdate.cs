@@ -1,20 +1,16 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace FCG.Application.DTOs
+namespace FCG.Application.DTOs;
+
+public class UserUpdate
 {
-    public class UserUpdate
-    {
-        public Guid Id { get; set; }
+    public Guid Id { get; set; }
 
-        public string Name { get; set; }
+    public string Name { get; set; }
 
-        public string Phone { get; set; }
+    public string Phone { get; set; }
 
-        public DateTime BirthDate { get; set; }
+    public DateTime BirthDate { get; set; }
 
-        public bool? Situation { get; set; } 
-    }
+    public bool? Situation { get; set; }
 }

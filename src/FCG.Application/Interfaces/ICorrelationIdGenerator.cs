@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace FCG.Application.Interfaces;
 
-namespace FCG.Application.Interfaces
+public interface ICorrelationIdGenerator
 {
-    public interface ICorrelationIdGenerator
-    {
-        public string CorrelationId { get; set; }
-    }
+    public string CorrelationId { get; set; }
 }

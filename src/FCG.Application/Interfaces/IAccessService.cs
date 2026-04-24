@@ -1,10 +1,10 @@
 ﻿using FCG.Application.DTOs;
 using System.Threading.Tasks;
 
-namespace FCG.Application.Interfaces
+namespace FCG.Application.Interfaces;
+
+public interface IAccessService
 {
-    public interface IAccessService
-    {
-        Task<string> Login(AccessLogin login);
-    }
+    Task<string> Login(AccessLogin login);
 }
+

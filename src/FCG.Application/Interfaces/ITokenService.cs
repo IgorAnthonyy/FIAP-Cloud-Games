@@ -1,12 +1,8 @@
 ﻿using FCG.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace FCG.Application.Interfaces
+namespace FCG.Application.Interfaces;
+
+public interface ITokenService
 {
-    public interface ITokenService
-    {
-        string GenerateTokenJWT(User userLogged);
-    }
+    string GenerateTokenJWT(User userLogged);
 }

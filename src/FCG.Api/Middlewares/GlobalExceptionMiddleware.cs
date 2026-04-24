@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using FCG.Domain.Exceptions;
-using FCG.Infrastructure.Log;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -35,13 +34,13 @@ public class GlobalExceptionMiddleware
         {
             await _next(context);
         }
-        catch (System.Exception exception)
+        catch (Exception exception)
         {
             await HandleExceptionAsync(context, exception);
         }
     }
 
-    private async Task HandleExceptionAsync(HttpContext context, System.Exception exception)
+    private async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         var statusCode = exception switch
         {

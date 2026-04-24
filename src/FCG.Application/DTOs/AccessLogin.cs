@@ -1,8 +1,8 @@
-﻿namespace FCG.Application.DTOs
+﻿namespace FCG.Application.DTOs;
+
+public class AccessLogin
 {
-    public class AccessLogin
-    {
-        public string Email { get; set; }
-        public string Password { get; set; }
-    }
+    public string Email { get; set; }
+    public string Password { get; set; }
 }
+

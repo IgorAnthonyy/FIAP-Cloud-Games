@@ -3,9 +3,7 @@ using FCG.Application.Interfaces;
 using FCG.Domain.Contants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.JsonWebTokens;
 using System;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FCG.Api.Controllers;
@@ -28,6 +26,7 @@ public class UserController : BaseController
     }
 
     [HttpPost("admin")]
+    [Authorize(Policy = FCGConstant.AdminRole)]
     public async Task<IActionResult> CreateAdmin([FromBody] AdminCreate user)
     {
         var userCreated = await _userService.CreateAdmin(user);
@@ -35,7 +34,7 @@ public class UserController : BaseController
     }
     
     [HttpPut("{id:guid}")]
-    [Authorize]
+    [Authorize(Policy = FCGConstant.AdminOrDefault)]
     public async Task<IActionResult> UpdateUser([FromRoute] Guid id, [FromBody] UserUpdate request)
     {
         request.Id = id;
@@ -45,7 +44,7 @@ public class UserController : BaseController
     }
 
     [HttpPut("change-password")]
-    [Authorize]
+    [Authorize(Policy = FCGConstant.AdminOrDefault)]
     public async Task<IActionResult> ChangePassword([FromBody] RequestChangePassword request)
     {
         await _userService.ChangePassword(request);

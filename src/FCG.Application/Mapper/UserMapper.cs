@@ -15,6 +15,7 @@ public class UserMapper : Profile
         CreateMap<CPF, string>().ConvertUsing(e => e.Code);
 
         CreateMap<User, UserCreate>().ReverseMap();
+        
         CreateMap<User, AdminCreate>().ReverseMap();
 
         CreateMap<User, UserView>().ReverseMap();

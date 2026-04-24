@@ -3,14 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FCG.Application.Interfaces
+namespace FCG.Application.Interfaces;
+
+public interface IUserLogged
 {
-    public interface IUserLogged
-    {
-        Guid UserId{ get; }
+    Guid UserId { get; }
 
-        List<Role> Roles { get; }
+    List<Role> Roles { get; }
 
-        bool IsAdmin { get; }
-    }
+    bool IsAdmin { get; }
 }
+

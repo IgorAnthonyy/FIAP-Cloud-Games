@@ -1,5 +1,4 @@
 ﻿using FCG.Application.Interfaces;
-using FCG.Infrastructure.Log;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -21,7 +20,6 @@ namespace FCG.Api.Middlewares
 
         public async Task InvokeAsync(HttpContext context, ICorrelationIdGenerator correlationIdGenerator)
         {
-            
             var correlationId = GetCorrelationId(context, correlationIdGenerator);
             context.Response.Headers[_correlationIdHeader] = correlationId.ToString();
             using (_logger.BeginScope("[CORRELATION_ID] - {CorrelationID}", correlationId))
@@ -29,14 +27,11 @@ namespace FCG.Api.Middlewares
                 await _next(context);
 
             }
-
-            
-            
         }
 
         private StringValues GetCorrelationId(HttpContext context, ICorrelationIdGenerator correlationIdGenerator)
         {
-            if(context.Request.Headers.TryGetValue(_correlationIdHeader, out var idCorrelation))
+            if (context.Request.Headers.TryGetValue(_correlationIdHeader, out var idCorrelation))
             {
                 correlationIdGenerator.CorrelationId = idCorrelation;
                 return idCorrelation;

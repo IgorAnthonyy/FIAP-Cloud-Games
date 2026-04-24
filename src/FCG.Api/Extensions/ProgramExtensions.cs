@@ -45,7 +45,7 @@ public static class ProgramExtensions
         {
             options.Filters.Add<FluentValidationActionFilter>();
         });
-        
+
         services.AddHttpContextAccessor();
 
         services.AddSwaggerGen(options =>
@@ -87,13 +87,13 @@ public static class ProgramExtensions
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAccessService, AccessService>();
-        
+
         var loggerFactory = LoggerFactory.Create(builder =>
         {
             builder.AddConsole();
         });
 
-        
+
         var mapperConfig = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile<UserMapper>(); // seus profiles
@@ -102,7 +102,7 @@ public static class ProgramExtensions
         IMapper mapper = mapperConfig.CreateMapper();
 
         services.AddSingleton(mapper);
-        
+
         return services;
     }
 
@@ -185,9 +185,10 @@ public static class ProgramExtensions
 
         services.AddAuthorizationBuilder()
             .AddPolicy(FCGConstant.AdminRole, policy => policy.RequireRole(FCGConstant.AdminRole))
-            .AddPolicy(FCGConstant.UserDefault, policy => policy.RequireRole(FCGConstant.UserDefault));
+            .AddPolicy(FCGConstant.UserDefault, policy => policy.RequireRole(FCGConstant.UserDefault))
+            .AddPolicy(FCGConstant.AdminOrDefault, policy => policy.RequireRole(FCGConstant.AdminRole, FCGConstant.UserDefault));
 
         return services;
     }
-    
+
 }

@@ -6,36 +6,34 @@ using FCG.Infrastructure.Password;
 using FCG.Tests.Fixture;
 using Moq;
 
-namespace FCG.Tests.Service
+namespace FCG.Tests.Service;
+
+[Collection(nameof(UserFixtureCollection))]
+public class AccessServiceTest
 {
+    public UserBuilder _userFixture;
 
-    [Collection(nameof(UserFixtureCollection))]
-    public class AccessServiceTest
+    public AccessServiceTest(UserBuilder userFixture)
     {
-        public UserBuilder _userFixture;
+        _userFixture = userFixture;
+    }
 
-        public AccessServiceTest(UserBuilder userFixture)
-        {
-            _userFixture = userFixture;
-        }
+    [Fact]
+    public async Task AccessService_Should_LoginSucessAndReturnToken()
+    {
+        //Arrange
 
-        [Fact]
-        public async Task AccessService_Should_LoginSucessAndReturnToken()
-        {
-            //Arrange
+        var passwordServiceMock = new PasswordService();
+        string passwordTest = "!Teste123456787";
+        string hash = passwordServiceMock.GenerateHash(passwordTest);
+        User userToLogin = _userFixture.GenerateUserLogin(hash);
+        var userRepositoryMock = new Mock<IUserRepository>();
+        userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
+                     .ReturnsAsync(userToLogin);
 
-            var passwordServiceMock = new PasswordService();
-            string passwordTest = "!Teste123456787";
-            string hash = passwordServiceMock.GenerateHash(passwordTest);
-            User userToLogin = _userFixture.GenerateUserLogin(hash);
-            var userRepositoryMock = new Mock<IUserRepository>();
-            userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
-                         .ReturnsAsync(userToLogin);
+        var accessDomainService = new AccessDomainService(userRepositoryMock.Object, passwordServiceMock);
+        var token = await accessDomainService.Login(userToLogin.Email, new Domain.ValueObjects.Password(passwordTest));
 
-            var accessDomainService = new AccessDomainService(userRepositoryMock.Object, passwordServiceMock);
-            var token = await accessDomainService.Login(userToLogin.Email, new Domain.ValueObjects.Password(passwordTest));
-
-            Assert.IsType<User>(token);
-        }
+        Assert.IsType<User>(token);
     }
 }

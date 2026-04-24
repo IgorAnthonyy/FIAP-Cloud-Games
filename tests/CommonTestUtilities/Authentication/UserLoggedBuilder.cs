@@ -1,4 +1,5 @@
 ﻿using FCG.Application.Interfaces;
+using FCG.Domain.Contants;
 using FCG.Domain.Entities;
 using Moq;
 
@@ -13,7 +14,7 @@ public class UserLoggedBuilder
         mock.Setup(u => u.UserId).Returns(user.Id);
         mock.Setup(u => u.Roles).Returns((List<Role>)(user.Roles ?? []));
         mock.Setup(u => u.IsAdmin).Returns(
-            user.Roles?.Any(r => string.Equals(r.Name, "Admin", StringComparison.OrdinalIgnoreCase)) ?? false
+            user.Roles?.Any(r => string.Equals(r.Name, FCGConstant.AdminRole, StringComparison.OrdinalIgnoreCase)) ?? false
         );
 
         return mock.Object;
@@ -24,7 +25,7 @@ public class UserLoggedBuilder
         var mock = new Mock<IUserLogged>();
 
         mock.Setup(u => u.UserId).Returns(user.Id);
-        mock.Setup(u => u.Roles).Returns([new Role("Admin")]);
+        mock.Setup(u => u.Roles).Returns([new Role(FCGConstant.AdminRole)]);
         mock.Setup(u => u.IsAdmin).Returns(true);
 
         return mock.Object;
