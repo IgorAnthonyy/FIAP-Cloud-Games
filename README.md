@@ -150,4 +150,9 @@ git push origin minha-feature
 ## 📞 Contato
 
 O time responsável desse sistema:
+- Igor Anthony - igor.anthony.iop@gmail.com
+- Nathalia Greice - nponce410@gmail.com
+- Otávio de Andrade - otavio_andrade@live.com
+- Pedro Henrique Barros - pedrobarros0101@outlook.com
+- Sérgio Henrique - ssergioh3@gmail.com
 
