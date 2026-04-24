@@ -47,17 +47,29 @@ Antes de começar, você precisa ter instalado:
 ### 1. Clonar o repositório
 
 ```bash
-git clone https://github.com/seu-repo/sua-api.git
+git clone https://github.com/IgorAnthonyy/FIAP-Cloud-Games.git
 cd sua-api
 ```
 
 ### 2. Configurar variáveis de ambiente
 
-Crie um arquivo `appsettings.Development.json` ou use variáveis:
+Modifique o seu arquivo `appsettings.Development.json` para o template abaixo:
 
 ```json
-"ConnectionStrings": {
-  "DefaultConnection": "Host=localhost;Database=MinhaDb;Username=postgres;Password=123"
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=seubanco;Username=seuusuario;Password=suasenhga"
+  },
+  "EmailSettings": {
+    "Host": "Host do email utilizado,
+    "Port": 587 // exemplo de porta,
+    "User": "Email do sistema",
+    "Password": "Senha do email do sistema"
+  },
+  "Jwt": {
+    "Key": "Chave para JWT",
+    "Issuer": "FCGames"
+  }
 }
 ```
 
@@ -70,63 +82,24 @@ dotnet ef database update
 ### 4. Executar a API
 
 ```bash
-dotnet run
+dotnet run --launch-profile http
 ```
 
 A API estará disponível em:
 
 ```
-https://localhost:5001
+https://localhost:7210
 ```
 
 ---
 
 ## 📚 Documentação da API
 
-Se estiver usando Swagger:
+Existe o Swagger UI para você conseguir visualizar melhor os endpoints já feitos e pode ser visto na seguinte url:
 
 ```
-https://localhost:5001/swagger
+https://localhost:7210/swagger
 ```
-
----
-
-## 🔐 Autenticação (se houver)
-
-Explique:
-
-* Tipo: JWT, OAuth, etc.
-* Como obter token
-
-Exemplo:
-
-```bash
-POST /auth/login
-```
-
-Resposta:
-
-```json
-{
-  "token": "jwt_token_aqui"
-}
-```
-
----
-
-## 📌 Endpoints principais
-
-### 👤 Usuários
-
-* `GET /users`
-* `POST /users`
-* `PUT /users/{id}`
-* `DELETE /users/{id}`
-
-### 📊 Oportunidades
-
-* `GET /opportunities`
-* `POST /opportunities`
 
 ---
 
@@ -134,10 +107,11 @@ Resposta:
 
 ```
 /src
- ├── Api
- ├── Application
- ├── Domain
- ├── Infrastructure
+ ├── FCG.Api
+ ├── FCG.Application
+ ├── FCG.Domain
+ ├── FCG.Infrastructure
+ |── FCG.Tests
 ```
 
 ---
@@ -147,30 +121,6 @@ Resposta:
 ```bash
 dotnet test
 ```
-
----
-
-## 🐳 Rodando com Docker (opcional)
-
-```bash
-docker-compose up -d
-```
-
----
-
-## 🚀 Deploy
-
-Explique como publicar:
-
-```bash
-dotnet publish -c Release
-```
-
-Ou mencione:
-
-* Azure
-* AWS
-* VPS
 
 ---
 
@@ -196,14 +146,8 @@ git push origin minha-feature
 
 ---
 
-## 📄 Licença
-
-Este projeto está sob a licença MIT.
-
----
 
 ## 📞 Contato
 
-Seu nome ou time responsável
-Email ou canal interno
+O time responsável desse sistema:
 
