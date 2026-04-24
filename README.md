@@ -58,11 +58,11 @@ Modifique o seu arquivo `appsettings.Development.json` para o template abaixo:
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=seubanco;Username=seuusuario;Password=suasenhga"
+    "DefaultConnection": "Host=localhost;Port=portaDoBanco;Database=seubanco;Username=seuusuario;Password=suasenhga"
   },
   "EmailSettings": {
     "Host": "Host do email utilizado,
-    "Port": 587 // exemplo de porta,
+    "Port": 123 // exemplo de porta,
     "User": "Email do sistema",
     "Password": "Senha do email do sistema"
   },
