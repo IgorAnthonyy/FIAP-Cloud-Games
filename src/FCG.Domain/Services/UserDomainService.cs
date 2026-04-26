@@ -66,7 +66,7 @@ public class UserDomainService : IUserDomainService
         userToUpdate.Name = user.Name;
         userToUpdate.Phone = user.Phone;
         userToUpdate.BirthDate = user.BirthDate;
-
+        userToUpdate.Situation = user.Situation;
         _userRepository.Update(userToUpdate);
 
         return userToUpdate;
