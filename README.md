@@ -76,12 +76,14 @@ Modifique o seu arquivo `appsettings.Development.json` para o template abaixo:
 ### 3. Rodar migrations
 
 ```bash
-dotnet ef database update
+cd src/FCG.Infrastructure
+dotnet ef database update --startup-project ../FCG.Api
 ```
 
 ### 4. Executar a API
 
 ```bash
+cd src/FCG.Api
 dotnet run --launch-profile http
 ```
 
