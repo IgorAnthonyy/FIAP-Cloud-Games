@@ -415,7 +415,7 @@ public class UserServiceTest
         var result = await act.ShouldThrowAsync<BusinessException>();
     }
 
-    
+
 
     [Fact]
     public async Task UpdateUser_Admin_Deve_Editar_Qualquer_Usuario()

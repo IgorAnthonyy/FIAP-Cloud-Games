@@ -5,7 +5,6 @@ using FCG.Domain.Exceptions;
 using FCG.Domain.Interfaces.Respositories;
 using FCG.Domain.ValueObjects;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FCG.Domain.Services;
@@ -21,7 +20,7 @@ public class UserDomainService : IUserDomainService
         _passwordHashService = passwordHashService;
     }
 
-    public async Task<User> CreateUser(User user, string role)
+    public async Task<User> Create(User user, string role)
     {
         var userSearch = await _userRepository.GetByEmail(user.Email.Value);
 
@@ -29,14 +28,14 @@ public class UserDomainService : IUserDomainService
 
         var password = new Password(user.Password);
 
-        user.CreateUser(user, new Role(role));
+        user.Create(user, new Role(role));
         user.Password = _passwordHashService.GenerateHash(password.Value);
         User insertedUser = await _userRepository.Insert(user);
 
         return insertedUser;
     }
 
-    public async Task DeleteUser(Guid idUserToDeleted)
+    public async Task Delete(Guid idUserToDeleted)
     {
 
         User userToDeleted = await _userRepository.GetById(idUserToDeleted);
@@ -57,16 +56,14 @@ public class UserDomainService : IUserDomainService
         return await _userRepository.GetByEmail(email);
     }
     
-    public async Task<User> UpdateUser(User user)
+    public async Task<User> Update(User user)
     {
         User userToUpdate = await _userRepository.GetById(user.Id);
         if (userToUpdate == null)
             throw new BusinessException("Usuário não encontrado");
 
-        userToUpdate.Name = user.Name;
-        userToUpdate.Phone = user.Phone;
-        userToUpdate.BirthDate = user.BirthDate;
-        userToUpdate.Situation = user.Situation;
+        userToUpdate.Update(user);
+
         _userRepository.Update(userToUpdate);
 
         return userToUpdate;

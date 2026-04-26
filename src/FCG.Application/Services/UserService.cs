@@ -39,7 +39,7 @@ public class UserService : BaseApplicationService, IUserService
     public async Task<UserResponse> CreateUser(UserCreate user)
     {
         var userMapped = _mapper.Map<User>(user);
-        var insertedUser = await _userDomainService.CreateUser(userMapped, FCGConstant.UserDefault);
+        var insertedUser = await _userDomainService.Create(userMapped, FCGConstant.UserDefault);
         await UnitOfWork.CommitAsync();
 
         var userResponse = _mapper.Map<UserResponse>(insertedUser);
@@ -57,7 +57,7 @@ public class UserService : BaseApplicationService, IUserService
         var userMapped = _mapper.Map<User>(user);
         userMapped.Password = temporaryPassword;
         
-        var insertedUser = await _userDomainService.CreateUser(userMapped, FCGConstant.AdminRole);
+        var insertedUser = await _userDomainService.Create(userMapped, FCGConstant.AdminRole);
         await UnitOfWork.CommitAsync();
 
         var userResponse = _mapper.Map<UserResponse>(insertedUser);
@@ -89,7 +89,7 @@ public class UserService : BaseApplicationService, IUserService
         if (isAdmin && user.Situation.HasValue)
             userToUpdate.Situation = user.Situation.Value;
 
-        await _userDomainService.UpdateUser(userToUpdate);
+        await _userDomainService.Update(userToUpdate);
         await UnitOfWork.CommitAsync();
 
         return _mapper.Map<UserResponse>(userToUpdate);
@@ -116,7 +116,7 @@ public class UserService : BaseApplicationService, IUserService
         if (!_userLogged.IsAdmin)
             throw new UnauthorizedAccessException("Apenas administradores podem deletar usuários");
 
-        await _userDomainService.DeleteUser(idUserToDeleted);
+        await _userDomainService.Delete(idUserToDeleted);
         await UnitOfWork.CommitAsync();
     }
 

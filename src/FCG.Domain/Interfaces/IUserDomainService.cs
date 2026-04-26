@@ -6,11 +6,11 @@ namespace FCG.Domain.Interfaces;
 
 public interface IUserDomainService
 {
-    Task<User> CreateUser(User user, string role);
-    Task DeleteUser(Guid idUserToDeleted);
+    Task<User> Create(User user, string role);
+    Task Delete(Guid idUserToDeleted);
     Task<User> GetById(Guid id);
     Task<User> GetByEmail(string email);
-    Task<User> UpdateUser(User user);
+    Task<User> Update(User user);
     Task ChangePassword(Guid idUser, string newPassword);
 
 }

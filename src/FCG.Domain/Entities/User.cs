@@ -24,7 +24,7 @@ public class User : BaseEntity
 
     public ICollection<Role> Roles { get; set; } = [];
 
-    public void CreateUser(User user, Role role)
+    public void Create(User user, Role role)
     {
         base.CreateBaseEntity();
 
@@ -50,5 +50,13 @@ public class User : BaseEntity
     public bool IsAdmin()
     {
         return Roles.Any(r => r.Name == FCGConstant.AdminRole);
+    }
+
+    public void Update(User user)
+    {
+        Name = user.Name;
+        Phone = user.Phone;
+        BirthDate = user.BirthDate;
+        Situation = user.Situation;
     }
 }
