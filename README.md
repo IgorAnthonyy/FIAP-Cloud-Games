@@ -1,7 +1,7 @@
 
 # 🚀 FIAP-Cloud-Games
 
-Essa API está voltada para ser o backend de uma plataforma de venda de jogos digitais e de realizar uma gestão de servidores para partidas onlines. Para um desenvolvimento mais seguro, esse projeto foi dividio em quatro fases
+Essa API está voltada para ser o backend de uma plataforma de venda de jogos digitais e de realizar uma gestão de servidores para partidas onlines. Para um desenvolvimento mais seguro, esse projeto foi dividido em quatro fases
 
 
 ---
