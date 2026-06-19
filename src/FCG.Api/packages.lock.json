@@ -56,15 +56,32 @@
         "resolved": "12.1.1",
         "contentHash": "EPpkIe1yh1a0OXyC100oOA8WMbZvqUu5plwhvYcb7oSELfyUZzfxV48BLhvs3kKo4NwG7MGLNgy1RJiYtT8Dpw=="
       },
-      "Handlebars.Net": {
-        "type": "Transitive",
-        "resolved": "2.1.6",
-        "contentHash": "WsYWCEXsIM6hEOSOSRHtIYLjC8BnbT5MVmqhNKRqUI7qiv0t8x3nJiBTEv0ZZfvUAMAFnadGIzSsS/U2anVG1Q=="
-      },
       "Humanizer.Core": {
         "type": "Transitive",
         "resolved": "2.14.1",
         "contentHash": "lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw=="
+      },
+      "MassTransit": {
+        "type": "Transitive",
+        "resolved": "8.3.6",
+        "contentHash": "iQQ02dUJuWlpNai3eDN7WmnstvmB2LAD8YN1i8OFT5BaNpGYYg3v0US3S6f1Zz7us+NnGHm6csg25Ak3z0H7Xg==",
+        "dependencies": {
+          "MassTransit.Abstractions": "8.3.6"
+        }
+      },
+      "MassTransit.Abstractions": {
+        "type": "Transitive",
+        "resolved": "8.3.6",
+        "contentHash": "F3R3EFPvUvpsiebnijmpvZ4IhSEcqkEJdrhlFuTOjzIUnMRYBgki/oDfFWj57Ki4b9yq0nilt4Q5bk11pC4ygg=="
+      },
+      "MassTransit.RabbitMQ": {
+        "type": "Transitive",
+        "resolved": "8.3.6",
+        "contentHash": "gR67/f8reudNVUf0yDdUBuDLBFjDdqCSF8K3XaIlpHSRmmCUTBVPVrt0h65/Zty00okBHzcbUX32bLZeQL51sw==",
+        "dependencies": {
+          "MassTransit": "8.3.6",
+          "RabbitMQ.Client": "7.0.0"
+        }
       },
       "Microsoft.Build.Framework": {
         "type": "Transitive",
@@ -271,6 +288,11 @@
           "Npgsql": "10.0.2"
         }
       },
+      "RabbitMQ.Client": {
+        "type": "Transitive",
+        "resolved": "7.0.0",
+        "contentHash": "8YJz22mOSMtkbIVuVSz2HbJwbpKwRoXQ1uqbczDUt1w1Ds8dxFs6dkV/oZ8AlTmkErZjtQelHv+oBu52ud00WA=="
+      },
       "Swashbuckle.AspNetCore.Swagger": {
         "type": "Transitive",
         "resolved": "10.1.7",
@@ -359,7 +381,8 @@
         "dependencies": {
           "AutoMapper": "[16.1.1, )",
           "FCG.Domain": "[1.0.0, )",
-          "FluentValidation": "[12.1.1, )"
+          "FluentValidation": "[12.1.1, )",
+          "MassTransit": "[8.3.6, )"
         }
       },
       "fcg.domain": {
@@ -371,13 +394,17 @@
           "BCrypt.Net-Next": "[4.1.0, )",
           "FCG.Application": "[1.0.0, )",
           "FCG.Domain": "[1.0.0, )",
-          "Handlebars.Net": "[2.1.6, )",
+          "FCG.Shared": "[1.0.0, )",
+          "MassTransit.RabbitMQ": "[8.3.6, )",
           "Microsoft.EntityFrameworkCore": "[10.0.5, )",
           "Microsoft.EntityFrameworkCore.Design": "[10.0.5, )",
           "Microsoft.EntityFrameworkCore.Tools": "[10.0.5, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.1, )",
           "System.IdentityModel.Tokens.Jwt": "[8.17.0, )"
         }
+      },
+      "fcg.shared": {
+        "type": "Project"
       }
     }
   }

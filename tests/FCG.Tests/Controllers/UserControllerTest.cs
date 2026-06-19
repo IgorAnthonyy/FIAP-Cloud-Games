@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using CommonTestUtilities.Entities;
 using CommonTestUtilities.Services;
 using FCG.Api.Controllers;
@@ -20,6 +20,7 @@ public class UserControllerTest
     private AuthorizeAttribute? GetAuthorizeAttributeFromRoute(string methodControllerName)
     {
         var createUserMethod = typeof(UserController).GetMethod(methodControllerName);
+        if (createUserMethod == null) return null;
 
         var authorizateAttribute = createUserMethod.GetCustomAttribute<AuthorizeAttribute>();
         return authorizateAttribute;
@@ -38,7 +39,7 @@ public class UserControllerTest
     {
         var authorizateAttribute = this.GetAuthorizeAttributeFromRoute(nameof(UserController.UpdateUser));
 
-        Assert.Equal(FCGConstant.AdminOrDefault, authorizateAttribute.Policy);
+        Assert.Equal(FCGConstant.AdminOrDefault, authorizateAttribute?.Policy);
     }
 
     [Fact]
@@ -46,7 +47,7 @@ public class UserControllerTest
     {
         var authorizateAttribute = this.GetAuthorizeAttributeFromRoute(nameof(UserController.DeleteUser));
 
-        Assert.Equal(FCGConstant.AdminRole, authorizateAttribute.Policy);
+        Assert.Equal(FCGConstant.AdminRole, authorizateAttribute?.Policy);
     }
 
     [Fact]
@@ -54,7 +55,7 @@ public class UserControllerTest
     {
         var authorizateAttribute = this.GetAuthorizeAttributeFromRoute(nameof(UserController.DeleteUser));
 
-        Assert.NotEqual(FCGConstant.UserDefault, authorizateAttribute.Policy);
+        Assert.NotEqual(FCGConstant.UserDefault, authorizateAttribute?.Policy);
     }
 
     [Fact]
@@ -62,7 +63,7 @@ public class UserControllerTest
     {
         var authorizateAttribute = this.GetAuthorizeAttributeFromRoute(nameof(UserController.CreateAdmin));
 
-        Assert.Equal(FCGConstant.AdminRole, authorizateAttribute.Policy);
+        Assert.Equal(FCGConstant.AdminRole, authorizateAttribute?.Policy);
     }
 
 
@@ -71,7 +72,7 @@ public class UserControllerTest
     {
         var authorizateAttribute = this.GetAuthorizeAttributeFromRoute(nameof(UserController.CreateAdmin));
 
-        Assert.NotEqual(FCGConstant.UserDefault, authorizateAttribute.Policy);
+        Assert.NotEqual(FCGConstant.UserDefault, authorizateAttribute?.Policy);
     }
 
     [Fact]
@@ -79,6 +80,6 @@ public class UserControllerTest
     {
         var authorizateAttribute = this.GetAuthorizeAttributeFromRoute(nameof(UserController.ChangePassword));
 
-        Assert.Equal(FCGConstant.AdminOrDefault, authorizateAttribute.Policy);
+        Assert.Equal(FCGConstant.AdminOrDefault, authorizateAttribute?.Policy);
     }
 }

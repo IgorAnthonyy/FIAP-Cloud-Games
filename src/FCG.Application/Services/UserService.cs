@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FCG.Application.DTOs;
 using FCG.Application.Interfaces;
 using FCG.Domain.Contants;
@@ -16,7 +16,7 @@ namespace FCG.Application.Services;
 
 public class UserService : BaseApplicationService, IUserService
 {
-    private readonly IEmailService _emailService;
+    private readonly INotificationPublisher _notificationPublisher;
     private readonly IUserDomainService _userDomainService;
     private readonly IMapper _mapper;
     private readonly IUserLogged _userLogged;
@@ -24,13 +24,13 @@ public class UserService : BaseApplicationService, IUserService
 
     public UserService(IUnitOfWork unitOfWork,
         IMapper mapper,
-        IEmailService emailService,
+        INotificationPublisher notificationPublisher,
         IUserDomainService userDomainService,
         IUserLogged userLogged,
         IPasswordService passwordService) : base(unitOfWork)
     {
         _mapper = mapper;
-        _emailService = emailService;
+        _notificationPublisher = notificationPublisher;
         _userDomainService = userDomainService;
         _userLogged = userLogged;
         _passwordService = passwordService;
@@ -43,9 +43,8 @@ public class UserService : BaseApplicationService, IUserService
         await UnitOfWork.CommitAsync();
 
         var userResponse = _mapper.Map<UserResponse>(insertedUser);
-        var userView = _mapper.Map<UserView>(insertedUser);
 
-        await _emailService.SendAsync(userView);
+        await _notificationPublisher.PublishUserDefaultCreatedAsync(insertedUser);
 
         return userResponse;
     }
@@ -61,9 +60,8 @@ public class UserService : BaseApplicationService, IUserService
         await UnitOfWork.CommitAsync();
 
         var userResponse = _mapper.Map<UserResponse>(insertedUser);
-        var userView = _mapper.Map<UserView>(insertedUser);
 
-        await _emailService.SendAsync(userView, temporaryPassword, Domain.Enums.EmailOptions.Admin);
+        await _notificationPublisher.PublishUserAdminCreatedAsync(insertedUser, temporaryPassword);
 
         return userResponse;
     }

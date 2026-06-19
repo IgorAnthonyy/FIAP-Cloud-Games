@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: users-api-config
+  namespace: default
+data:
+  Jwt__Issuer: "FCGames"
+  RabbitMQ__Host: "rabbitmq-service"
+  RabbitMQ__VirtualHost: "/"
+  RabbitMQ__Username: "guest"
