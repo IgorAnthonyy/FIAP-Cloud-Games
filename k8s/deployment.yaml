@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: users-api-deployment
+  name: users-api
   namespace: default
   labels:
     app: users-api
