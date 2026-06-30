@@ -5,6 +5,5 @@ namespace FCG.Domain.Interfaces;
 
 public interface INotificationPublisher
 {
-    Task PublishUserDefaultCreatedAsync(User user);
-    Task PublishUserAdminCreatedAsync(User user, string temporaryPassword);
+    Task PublishUserCreatedAsync(User user, bool isAdmin, string? temporaryPassword);
 }

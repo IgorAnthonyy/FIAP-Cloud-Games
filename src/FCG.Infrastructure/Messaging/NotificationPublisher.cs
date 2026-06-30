@@ -15,32 +15,19 @@ public class NotificationPublisher : INotificationPublisher
         _publishEndpoint = publishEndpoint;
     }
 
-    public async Task PublishUserDefaultCreatedAsync(User user)
+    public async Task PublishUserCreatedAsync(User user, bool isAdmin, string? temporaryPassword)
     {
-        var @event = new UserDefaultCreatedEvent(
-            Id: user.Id,
-            Name: user.Name,
-            Email: user.Email.Value
-        );
-
-        await _publishEndpoint.Publish(@event, context =>
-        {
-            context.SetRoutingKey("user.created.default");
-        });
-    }
-
-    public async Task PublishUserAdminCreatedAsync(User user, string temporaryPassword)
-    {
-        var @event = new UserAdminCreatedEvent(
-            Id: user.Id,
+        var @event = new UserCreatedEvent(
+            UserId: user.Id,
             Name: user.Name,
             Email: user.Email.Value,
+            IsAdmin: isAdmin,
             TemporaryPassword: temporaryPassword
         );
 
         await _publishEndpoint.Publish(@event, context =>
         {
-            context.SetRoutingKey("user.created.admin");
+            context.SetRoutingKey("user.created-created");
         });
     }
 }

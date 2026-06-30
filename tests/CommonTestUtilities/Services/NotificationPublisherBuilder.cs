@@ -10,10 +10,7 @@ public class NotificationPublisherBuilder
     {
         var mock = new Mock<INotificationPublisher>();
 
-        mock.Setup(s => s.PublishUserDefaultCreatedAsync(It.IsAny<User>()))
-            .Returns(Task.CompletedTask);
-
-        mock.Setup(s => s.PublishUserAdminCreatedAsync(It.IsAny<User>(), It.IsAny<string>()))
+        mock.Setup(s => s.PublishUserCreatedAsync(It.IsAny<User>(), It.IsAny<bool>(), It.IsAny<string?>()))
             .Returns(Task.CompletedTask);
 
         return mock.Object;

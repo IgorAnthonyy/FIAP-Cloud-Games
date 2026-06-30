@@ -44,7 +44,7 @@ public class UserService : BaseApplicationService, IUserService
 
         var userResponse = _mapper.Map<UserResponse>(insertedUser);
 
-        await _notificationPublisher.PublishUserDefaultCreatedAsync(insertedUser);
+        await _notificationPublisher.PublishUserCreatedAsync(insertedUser, false, null);
 
         return userResponse;
     }
@@ -61,7 +61,7 @@ public class UserService : BaseApplicationService, IUserService
 
         var userResponse = _mapper.Map<UserResponse>(insertedUser);
 
-        await _notificationPublisher.PublishUserAdminCreatedAsync(insertedUser, temporaryPassword);
+        await _notificationPublisher.PublishUserCreatedAsync(insertedUser, true, temporaryPassword);
 
         return userResponse;
     }

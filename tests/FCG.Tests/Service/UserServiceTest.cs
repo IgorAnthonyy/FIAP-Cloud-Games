@@ -61,7 +61,7 @@ public class UserServiceTest
         userLoggedMock.Setup(ul => ul.IsAdmin).Returns(false);
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(null as User);
-        notificationPublisherMock.Setup(e => e.PublishUserDefaultCreatedAsync(It.IsAny<User>())).Returns(Task.CompletedTask);
+        notificationPublisherMock.Setup(e => e.PublishUserCreatedAsync(It.IsAny<User>(), It.IsAny<bool>(), It.IsAny<string?>())).Returns(Task.CompletedTask);
         userRepositoryMock
             .Setup(r => r.Insert(It.IsAny<User>()))
             .ReturnsAsync(GetUser("teste@email.com"));
@@ -94,7 +94,7 @@ public class UserServiceTest
 
         userRepositoryMock.Verify(r => r.Insert(It.IsAny<User>()), Times.Once);
         uowMock.Verify(u => u.CommitAsync(), Times.Once);
-        notificationPublisherMock.Verify(e => e.PublishUserDefaultCreatedAsync(It.IsAny<User>()), Times.Once);
+        notificationPublisherMock.Verify(e => e.PublishUserCreatedAsync(It.IsAny<User>(), It.IsAny<bool>(), It.IsAny<string?>()), Times.Once);
         Assert.Equal("name", userCriado.Name);
     }
 
@@ -267,7 +267,7 @@ public class UserServiceTest
         var userLoggedMock = new Mock<IUserLogged>();
 
         userLoggedMock.Setup(ul => ul.IsAdmin).Returns(false);
-        notificationPublisherMock.Setup(e => e.PublishUserDefaultCreatedAsync(It.IsAny<User>())).Returns(Task.CompletedTask);
+        notificationPublisherMock.Setup(e => e.PublishUserCreatedAsync(It.IsAny<User>(), It.IsAny<bool>(), It.IsAny<string?>())).Returns(Task.CompletedTask);
         userRepositoryMock.Setup(u => u.GetByEmail(It.IsAny<string>()))
                           .ReturnsAsync(GetUser("teste@email.com"));
         userRepositoryMock
@@ -339,7 +339,7 @@ public class UserServiceTest
             Cpf = u.Cpf.Code
         });
 
-        notificationPublisherMock.Setup(e => e.PublishUserAdminCreatedAsync(It.IsAny<User>(), It.IsAny<string>())).Returns(Task.CompletedTask);
+        notificationPublisherMock.Setup(e => e.PublishUserCreatedAsync(It.IsAny<User>(), It.IsAny<bool>(), It.IsAny<string?>())).Returns(Task.CompletedTask);
         passwordServiceMock.Setup(p => p.GenerateHash(It.IsAny<string>())).Returns("hashed");
 
         var userDomainService = new UserDomainService(userRepositoryMock.Object, passwordServiceMock.Object);
@@ -358,7 +358,7 @@ public class UserServiceTest
         //Assert
         Assert.NotNull(insertedUserCapture);
         Assert.Contains(insertedUserCapture.Roles, r => r.Name == "ADMIN");
-        notificationPublisherMock.Verify(e => e.PublishUserAdminCreatedAsync(It.IsAny<User>(), It.Is<string>(s => !string.IsNullOrWhiteSpace(s))), Times.Once);
+        notificationPublisherMock.Verify(e => e.PublishUserCreatedAsync(It.IsAny<User>(), It.IsAny<bool>(), It.Is<string>(s => !string.IsNullOrWhiteSpace(s))), Times.Once);
         uowMock.Verify(u => u.CommitAsync(), Times.Once);
         Assert.Equal("admin", userCriado.Name);
     }
