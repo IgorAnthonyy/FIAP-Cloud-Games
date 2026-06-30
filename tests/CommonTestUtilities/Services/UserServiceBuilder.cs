@@ -1,4 +1,4 @@
-﻿using CommonTestUtilities.Authentication;
+using CommonTestUtilities.Authentication;
 using CommonTestUtilities.Mapper;
 using CommonTestUtilities.Password;
 using CommonTestUtilities.Repositories;
@@ -14,14 +14,14 @@ public static class UserServiceBuilder
     {
         var unitOfWork = UnitOfWorkBuilder.Build();
         var mapper = MapperBuilder.Build();
-        var emailService = EmailServiceBuilder.Build(user);
+        var notificationPublisher = NotificationPublisherBuilder.Build(user);
         var passwordEncripter = new PasswordServiceBuilder().VerifyPassword(password).Build();
         var userRepositoryMock = new UserRepositoryBuild().GetByEmail(user).GetById(targetUser ?? user).Build();
         var loggedUser = isAdmin ? UserLoggedBuilder.BuildAdmin(user) : UserLoggedBuilder.Build(user);
 
 
         var userDomainService = new UserDomainService(userRepositoryMock, passwordEncripter);
-        var userService = new UserService(unitOfWork, mapper, emailService, userDomainService, loggedUser, passwordEncripter);
+        var userService = new UserService(unitOfWork, mapper, notificationPublisher, userDomainService, loggedUser, passwordEncripter);
 
         return (userService, userDomainService);
     }

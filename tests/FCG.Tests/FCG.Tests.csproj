@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -31,6 +31,7 @@
     <ProjectReference Include="..\..\src\FCG.Domain\FCG.Domain.csproj" />
     <ProjectReference Include="..\..\src\FCG.Infrastructure\FCG.Infrastructure.csproj" />
     <ProjectReference Include="..\..\tests\CommonTestUtilities\CommonTestUtilities.csproj" />
+    <ProjectReference Include="..\..\src\FCG.Shared\FCG.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

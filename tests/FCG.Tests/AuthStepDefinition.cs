@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using CommonTestUtilities.Entities;
 using FCG.Application.Interfaces;
 using FCG.Domain.Entities;
@@ -20,7 +20,7 @@ namespace FCG.Tests
         private readonly Mock<IMapper> _mapper = new();
         private readonly Mock<IUserLogged> _userLogged = new();
         public UserBuilder _userFixture;
-        private User userAdmin;
+        private User userAdmin = null!;
         private readonly AdminContext _adminContext;
         public AuthStepDefinition(UserBuilder userFixture, AdminContext adminContext)
         {

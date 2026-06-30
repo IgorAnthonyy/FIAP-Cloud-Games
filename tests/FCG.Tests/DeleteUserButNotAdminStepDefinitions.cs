@@ -19,16 +19,16 @@ namespace FCG.Tests
     public class DeleteUserButNotAdminStepDefinitions
     {
         private readonly Mock<IUnitOfWork> _uow = new();
-        private readonly Mock<IEmailService> _email = new();
+        private readonly Mock<INotificationPublisher> _notificationPublisher = new();
         private readonly Mock<IPasswordService> _password = new();
         private readonly Mock<IUserRepository> _userRepo = new();
         private readonly Mock<IMapper> _mapper = new();
         private readonly Mock<IUserLogged> _userLogged = new();
         public UserBuilder _userFixture;
-        private UserService _service;
-        private UnauthorizedAccessException _unauthorizedException;
+        private UserService _service = null!;
+        private UnauthorizedAccessException _unauthorizedException = null!;
         private User userAdmin;
-        private User userRemove;
+        private User userRemove = null!;
 
         public DeleteUserButNotAdminStepDefinitions(UserBuilder userFixture, AdminContext context)
         {
@@ -56,7 +56,7 @@ namespace FCG.Tests
             _service = new UserService(
                 _uow.Object,
                 _mapper.Object,
-                _email.Object,
+                _notificationPublisher.Object,
                 domain,
                 _userLogged.Object,
                 _password.Object);

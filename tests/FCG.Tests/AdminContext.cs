@@ -1,4 +1,4 @@
-﻿using FCG.Application.Interfaces;
+using FCG.Application.Interfaces;
 using FCG.Domain.Entities;
 using FCG.Domain.Interfaces.Respositories;
 using Moq;
@@ -10,7 +10,7 @@ namespace FCG.Tests
 {
     public class AdminContext
     {
-        public User UserAdmin { get; set; }
+        public User UserAdmin { get; set; } = null!;
         public Mock<IUserLogged> UserLogged = new();
         public Mock<IUserRepository> UserRepo = new();
     }
