@@ -1,3 +1,4 @@
+using System;
 using AutoMapper;
 using FCG.Api.Filters;
 using FCG.Api.Middlewares;
@@ -7,17 +8,19 @@ using FCG.Application.Mapper;
 using FCG.Application.Services;
 using FCG.Application.Validator;
 using FCG.Domain.Contants;
+using FCG.Shared.Events;
 using FCG.Domain.Interfaces;
 using FCG.Domain.Interfaces.Respositories;
 using FCG.Domain.Services;
 using FCG.Infrastructure.Authentication;
 using FCG.Infrastructure.Data;
-using FCG.Infrastructure.Email.Service;
+using FCG.Infrastructure.Messaging;
 using FCG.Infrastructure.Log;
 using FCG.Infrastructure.Password;
 using FCG.Infrastructure.Persistence;
 using FCG.Infrastructure.Repositories;
 using FCG.Infrastructure.Settings;
+using MassTransit;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -26,7 +29,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Text;
@@ -124,7 +126,36 @@ public static class ProgramExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
 
-        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<INotificationPublisher, NotificationPublisher>();
+
+        var rabbitMqConfig = configuration.GetSection("RabbitMQ").Get<RabbitMqSettings>();
+        if (rabbitMqConfig == null ||
+            string.IsNullOrWhiteSpace(rabbitMqConfig.Host) ||
+            string.IsNullOrWhiteSpace(rabbitMqConfig.Username) ||
+            string.IsNullOrWhiteSpace(rabbitMqConfig.Password))
+        {
+            throw new InvalidOperationException("RabbitMQ configuration is missing or invalid. Application cannot start.");
+        }
+
+        services.AddMassTransit(x =>
+        {
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host(
+                    host: rabbitMqConfig.Host,
+                    virtualHost: rabbitMqConfig.VirtualHost ?? "/",
+                    h =>
+                    {
+                        h.Username(rabbitMqConfig.Username);
+                        h.Password(rabbitMqConfig.Password);
+                    });
+
+                cfg.Publish<UserCreatedEvent>(p => p.ExchangeType = "topic");
+
+                cfg.ConfigureEndpoints(context);
+            });
+        });
+
         services.AddScoped<ICorrelationIdGenerator, CorrelationIdGenerator>();
         services.AddScoped<IUserLogged, UserLogged>();
         services.AddScoped<ITokenService, TokenService>();
@@ -189,6 +220,16 @@ public static class ProgramExtensions
             .AddPolicy(FCGConstant.AdminOrDefault, policy => policy.RequireRole(FCGConstant.AdminRole, FCGConstant.UserDefault));
 
         return services;
+    }
+
+    public static WebApplication ApplyMigrations(this WebApplication app)
+    {
+        using (var scope = app.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            dbContext.Database.Migrate();
+        }
+        return app;
     }
 
 }

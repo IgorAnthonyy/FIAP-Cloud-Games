@@ -1,4 +1,4 @@
-﻿using CommonTestUtilities.Entities;
+using CommonTestUtilities.Entities;
 using FCG.Domain.Contants;
 using FCG.Domain.Entities;
 using FCG.Infrastructure.Authentication;
@@ -21,7 +21,7 @@ public class TokenJWTTest
     [Fact]
     public async Task TokenService_Should_GeneratedTokenWithoutRole()
     {
-        var inMemorySettings = new Dictionary<string, string>
+        var inMemorySettings = new Dictionary<string, string?>
             {
                 { "Jwt:Key", "93323a7c6db8b59b1f9f2ac55704fb3701c12be607aeff516051f917b8cd5535994323ae" },
                 { "Jwt:Issuer", "meu-issuer" }
@@ -50,7 +50,7 @@ public class TokenJWTTest
     [Fact]
     public async Task TokenService_Should_GeneratedTokenWithRoleAdmin()
     {
-        var inMemorySettings = new Dictionary<string, string>
+        var inMemorySettings = new Dictionary<string, string?>
             {
                 { "Jwt:Key", "93323a7c6db8b59b1f9f2ac55704fb3701c12be607aeff516051f917b8cd5535994323ae" },
                 { "Jwt:Issuer", "meu-issuer" }
@@ -79,7 +79,7 @@ public class TokenJWTTest
     [Fact]
     public async Task TokenService_Should_GeneratedTokenWithRoleDefault()
     {
-        var inMemorySettings = new Dictionary<string, string>
+        var inMemorySettings = new Dictionary<string, string?>
             {
                 { "Jwt:Key", "93323a7c6db8b59b1f9f2ac55704fb3701c12be607aeff516051f917b8cd5535994323ae" },
                 { "Jwt:Issuer", "meu-issuer" }

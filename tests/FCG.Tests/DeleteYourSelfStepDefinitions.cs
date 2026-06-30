@@ -20,16 +20,16 @@ namespace FCG.Tests
     {
 
         private readonly Mock<IUnitOfWork> _uow = new();
-        private readonly Mock<IEmailService> _email = new();
+        private readonly Mock<INotificationPublisher> _notificationPublisher = new();
         private readonly Mock<IPasswordService> _password = new();
         private readonly Mock<IUserRepository> _userRepo = new();
         private readonly Mock<IMapper> _mapper = new();
         private readonly Mock<IUserLogged> _userLogged = new();
         public UserBuilder _userFixture;
-        private UserService _service;
+        private UserService _service = null!;
         private User userAdmin;
-        private User userRemove;
-        private BusinessException _businessException;
+        private User userRemove = null!;
+        private BusinessException _businessException = null!;
         public DeleteYourSelfStepDefinitions(UserBuilder userFixture, AdminContext context)
         {
             _userFixture = userFixture;
@@ -53,7 +53,7 @@ namespace FCG.Tests
             _service = new UserService(
                 _uow.Object,
                 _mapper.Object,
-                _email.Object,
+                _notificationPublisher.Object,
                 domain,
                 _userLogged.Object,
                 _password.Object);
