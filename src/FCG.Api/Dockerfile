@@ -9,7 +9,7 @@ COPY ["src/FCG.Api/FCG.Api.csproj", "src/FCG.Api/"]
 COPY ["src/FCG.Application/FCG.Application.csproj", "src/FCG.Application/"]
 COPY ["src/FCG.Domain/FCG.Domain.csproj", "src/FCG.Domain/"]
 COPY ["src/FCG.Infrastructure/FCG.Infrastructure.csproj", "src/FCG.Infrastructure/"]
-COPY ["src/FCG.Shared/FCG.Shared.csproj", "src/FCG.Shared/"]
+COPY ["src/submodule/FCG.Shared/FCG.Shared.csproj", "src/submodule/FCG.Shared/"]
 RUN dotnet restore "src/FCG.Api/FCG.Api.csproj"
 COPY . .
 WORKDIR "/src/src/FCG.Api"
