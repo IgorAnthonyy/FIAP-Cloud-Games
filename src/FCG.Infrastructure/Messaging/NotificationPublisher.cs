@@ -25,9 +25,6 @@ public class NotificationPublisher : INotificationPublisher
             TemporaryPassword: temporaryPassword
         );
 
-        await _publishEndpoint.Publish(@event, context =>
-        {
-            context.SetRoutingKey("user.created-created");
-        });
+        await _publishEndpoint.Publish(@event);
     }
 }
