@@ -1,25 +1,23 @@
+# 🚀 FIAP-Cloud-Games Users API
 
-# 🚀 FIAP-Cloud-Games
-
-Essa API está voltada para ser o backend de uma plataforma de venda de jogos digitais e de realizar uma gestão de servidores para partidas onlines. Para um desenvolvimento mais seguro, esse projeto foi dividido em quatro fases
-
+Essa API foi construída para compor o projeto do FIAP-Cloud-Games, com o intuito de realizar a gestão de usuários, 
+autenticação e autorização na plataforma de jogos.
 
 ---
 
-## 📌 Primeira fase
+## 📌 Segunda fase
 
-Essa fase contempla a base do sistema, contendo as seguintes funcionalidades
+Essa fase consiste em refatorar o monolitico feito na primeira fase em uma arquitetura de microsserviços, contendo os 
+seguintes microsserviços
 
-* Cadastro de Usuário
-* Deleção de Usuário
-* Atualização de um usuário
-* Autenticação
-* Autorização
-	* Usuário Padrão - Acesso padrão do sistema
-	* Usuário Admin - Podendo deletar outros usuários, adicionar novos admins no sistema.
-* Logs
-* Tratamento de erros globalmente
+* Microsserviço de Usuários (UsersAPI)
+* Microsserviço de Catálogo (CatalogAPI e CatalogWorker)
+* Microsserviço de Pagamentos (PaymentsWorker)
+* Microsserviço de Notificações (NotificationsWorker)
 
+## Imagem no docker
+A imagem desse projeto está disponível no Docker Hub como `igoranthony12/users-api`. As variaveis de ambientes são 
+mostradas na seção de `Como rodar o projeto via docker compose` e `Como rodar o projeto via kubernetes`.
 
 
 ---
@@ -42,32 +40,32 @@ Antes de começar, você precisa ter instalado:
 
 ---
 
-## ▶️ Como rodar o projeto
+## ▶️ Como rodar o projeto localmente
 
 ### 1. Clonar o repositório
 
 ```bash
-git clone https://github.com/IgorAnthonyy/FIAP-Cloud-Games.git
+git clone --recurse-submodules https://github.com/IgorAnthonyy/FIAP-Cloud-Games.git
 cd FIAP-Cloud-Games
 ```
 
 ### 2. Configurar variáveis de ambiente
 
-Modifique o seu arquivo `appsettings.Development.json` para o template abaixo:
+Crie e modifique o arquivo `src/FCG.Api/appsettings.Development.json` para o template abaixo:
 
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=portaDoBanco;Database=seubanco;Username=seuusuario;Password=suasenhga"
+    "DefaultConnection": "Host=localhost;Port=5432;Database=users;Username=fcg_user;Password=fcg_password"
   },
-  "EmailSettings": {
-    "Host": "Host do email utilizado,
-    "Port": 123 // exemplo de porta,
-    "User": "Email do sistema",
-    "Password": "Senha do email do sistema"
+  "RabbitMQ": {
+    "Host": "localhost",
+    "VirtualHost": "/",
+    "Username": "fcg_user",
+    "Password": "fcg_password"
   },
   "Jwt": {
-    "Key": "Chave para JWT",
+    "Key": "ChaveSuperSecretaECompridaDeExemplo123!",
     "Issuer": "FCGames"
   }
 }
@@ -88,19 +86,107 @@ dotnet run --launch-profile http
 ```
 
 A API estará disponível em:
-
 ```
 https://localhost:7210
 ```
 
 ---
-
 ## 📚 Documentação da API
 
 Existe o Swagger UI para você conseguir visualizar melhor os endpoints já feitos e pode ser visto na seguinte url:
 
 ```
 https://localhost:7210/swagger
+```
+
+---
+## ▶️ Como rodar o projeto via docker compose
+
+### 1. Clonar o repositório
+
+```bash
+git clone --recurse-submodules https://github.com/IgorAnthonyy/FIAP-Cloud-Games.git
+cd FIAP-Cloud-Games
+```
+
+### 2. Configurar variáveis de ambiente
+
+Acesse o arquivo `docker-compose.yml` e modifique as seguintes variáveis de ambiente abaixo:
+```
+Chave da imagem Rabbit:
+RABBITMQ_DEFAULT_USER: fcg_user
+RABBITMQ_DEFAULT_PASS: fcg_password
+RABBITMQ_DEFAULT_VHOST: /
+
+Chave do banco:
+ConnectionStrings__DefaultConnection: "Host=postgres;Database=users;Username=fcg_user;Password=fcg_password"
+
+Chaves do Rabbit no projeto:
+RabbitMQ__VirtualHost: /
+RabbitMQ__Username: fcg_user
+RabbitMQ__Password: fcg_password
+
+Chaves do JWT no projeto:
+Jwt__Key: "ChaveSuperSecretaECompridaDeExemplo123!"
+Jwt__Issuer: "FCGames"
+```
+
+### 3. Executar o compose
+#### 3.1 Subir os containers
+```bash
+cd FIAP-Cloud-Games
+docker compose up -d
+```
+
+#### 3.2 Descer os containers
+```bash
+docker compose down
+```
+---
+## ▶️ Como rodar o projeto via kubernetes
+
+### 1. Clonar o repositório
+
+```bash
+git clone --recurse-submodules https://github.com/IgorAnthonyy/FIAP-Cloud-Games.git
+cd FIAP-Cloud-Games
+```
+
+### 2. Configurar variáveis de ambiente
+
+Acesse o arquivo `k8s/configmap.yaml` e modifique as variáveis de ambiente abaixo:
+```yaml
+Jwt__Issuer: "FCGames"
+RabbitMQ__Host: "rabbitmq"
+RabbitMQ__VirtualHost: "/"
+RabbitMQ__Username: "fcg_user"
+```
+
+Acesse o arquivo `k8s/secrets.yaml` e modifique as variáveis de ambiente abaixo:
+```yaml
+ConnectionStrings__DefaultConnection: "Host=postgres;Database=users;Username=fcg_user;Password=fcg_password"
+Jwt__Key: "ChaveSuperSecretaECompridaDeExemplo123!"
+RabbitMQ__Password: "fcg_password"
+```
+
+> É necessário subir um serviço de RabbitMQ e do PostgreSQL para poder rodar o projeto no Kubernetes.
+
+### 3. Executar o projeto
+#### 3.1 Aplicar o kubernetes
+```bash
+cd FIAP-Cloud-Games
+kubectl apply -f k8s/configmap.yaml
+kubectl apply -f k8s/secrets.yaml
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+```
+
+#### 3.2 Deletar o Configmap, Secret, Deployment e Service
+```bash
+kubectl delete configmap users-api-config
+kubectl delete secret users-api-secrets
+kubectl delete deployment users-api
+kubectl delete service users-api-service
 ```
 
 ---
@@ -113,7 +199,6 @@ https://localhost:7210/swagger
  ├── FCG.Application
  ├── FCG.Domain
  ├── FCG.Infrastructure
- |── FCG.Tests
 ```
 
 ---
@@ -157,4 +242,3 @@ O time responsável desse sistema:
 - Otávio de Andrade - otavio_andrade@live.com
 - Pedro Henrique Barros - pedrobarros0101@outlook.com
 - Sérgio Henrique - ssergioh3@gmail.com
-
