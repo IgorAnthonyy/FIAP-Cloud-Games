@@ -5,6 +5,16 @@ autenticação e autorização na plataforma de jogos.
 
 ---
 
+## 📚 Documentação
+
+Os documentos gerais da solução ficam na pasta [`docs`](docs/):
+
+| Documento | Descrição |
+| --- | --- |
+| [Arquitetura de microsserviços](docs/arquitetura-microservicos.md) | Visão geral dos repositórios, responsabilidades, comunicação entre serviços, mensageria, bancos e diagramas Mermaid. |
+
+---
+
 ## 📌 Segunda fase
 
 Essa fase consiste em refatorar o monolitico feito na primeira fase em uma arquitetura de microsserviços, contendo os 
