@@ -32,6 +32,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Text;
+using Prometheus;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Resources;
 
 namespace FCG.Api.Extensions;
 
@@ -39,6 +42,7 @@ public static class ProgramExtensions
 {
     public static IServiceCollection ConfigureApi(this IServiceCollection services, IConfiguration configuration)
     {
+        
         services.AddScoped<FluentValidationActionFilter>();
 
         services.ConfigureAuthentication(configuration);
@@ -162,8 +166,11 @@ public static class ProgramExtensions
         return services;
     }
 
+    
+
     public static WebApplication ConfigureMiddleware(this WebApplication app)
     {
+        app.UseHttpMetrics();
         app.UseMiddleware<CorrelationMiddleware>();
         app.UseMiddleware<GlobalExceptionMiddleware>();
         app.UseMiddleware<LogMiddleware>();
@@ -182,7 +189,7 @@ public static class ProgramExtensions
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-
+        app.MapMetrics();
         return app;
     }
 
