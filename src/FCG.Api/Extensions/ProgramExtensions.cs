@@ -81,7 +81,19 @@ public static class ProgramExtensions
             });
             options.OperationFilter<CorrelationIdHeaderFilter>();
         });
-
+        services.AddOpenTelemetry()
+        .WithTracing(tracerProviderBuilder =>
+        {
+            tracerProviderBuilder
+                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("fcg-users-api"))
+                .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation()
+                .AddOtlpExporter(options =>
+                {
+                    // Tempo endpoint (OTLP gRPC)
+                    options.Endpoint = new Uri(configuration["OTEL_EXPORTER_OTLP_ENDPOINT"] ?? "http://tempo.observability:4317");
+                });
+        });
         return services;
     }
 
