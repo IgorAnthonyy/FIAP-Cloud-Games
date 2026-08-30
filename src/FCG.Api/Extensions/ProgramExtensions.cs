@@ -1,4 +1,3 @@
-using System;
 using AutoMapper;
 using FCG.Api.Filters;
 using FCG.Api.Middlewares;
@@ -8,33 +7,37 @@ using FCG.Application.Mapper;
 using FCG.Application.Services;
 using FCG.Application.Validator;
 using FCG.Domain.Contants;
-using FCG.Shared.Events;
 using FCG.Domain.Interfaces;
 using FCG.Domain.Interfaces.Respositories;
 using FCG.Domain.Services;
 using FCG.Infrastructure.Authentication;
 using FCG.Infrastructure.Data;
-using FCG.Infrastructure.Messaging;
 using FCG.Infrastructure.Log;
+using FCG.Infrastructure.Messaging;
 using FCG.Infrastructure.Password;
 using FCG.Infrastructure.Persistence;
 using FCG.Infrastructure.Repositories;
 using FCG.Infrastructure.Settings;
-using MassTransit;
+using FCG.Shared.Events;
 using FluentValidation;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using System.Text;
-using Prometheus;
-using OpenTelemetry.Trace;
 using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using Prometheus;
+using System;
+using System.Text;
 
 namespace FCG.Api.Extensions;
 
@@ -94,6 +97,8 @@ public static class ProgramExtensions
                     options.Endpoint = new Uri(configuration["OTEL_EXPORTER_OTLP_ENDPOINT"] ?? "http://tempo.observability:4317");
                 });
         });
+        services.AddHealthChecks()
+        .AddDbContextCheck<ApplicationDbContext>();
         return services;
     }
 
@@ -182,6 +187,15 @@ public static class ProgramExtensions
 
     public static WebApplication ConfigureMiddleware(this WebApplication app)
     {
+        app.MapHealthChecks("/Health", new HealthCheckOptions
+        {
+            AllowCachingResponses = false,
+            ResultStatusCodes =
+            {
+                [HealthStatus.Healthy] = StatusCodes.Status200OK,
+                [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
+            }
+        });
         app.UseHttpMetrics();
         app.UseMiddleware<CorrelationMiddleware>();
         app.UseMiddleware<GlobalExceptionMiddleware>();
