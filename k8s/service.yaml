@@ -4,7 +4,7 @@ metadata:
   name: users-api-service
   namespace: default
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: users-api
   ports:
