@@ -1,0 +1,270 @@
+{
+  "info": {
+    "_postman_id": "c6218dbe-fc60-4965-8bba-c255ef882672",
+    "name": "FIAP Cloud Games",
+    "description": "Coleção do Postman mapeando todos os endpoints do sistema FIAP Cloud Games (Autenticação e Gerenciamento de Usuários).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Access",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "var token = jsonData.token || jsonData.Token;",
+                  "if (token) {",
+                  "    pm.collectionVariables.set(\"token\", token);",
+                  "    console.log(\"Token de autenticação atualizado automaticamente na variável da coleção.\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@admin.com\",\n  \"password\": \"Admin@123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/Access/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "Access",
+                "login"
+              ]
+            },
+            "description": "Realiza o login no sistema. O token JWT retornado na resposta é salvo automaticamente na variável da coleção `token`."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints referentes ao controle de acesso e autenticação."
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Create User (Comum)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cliente Teste\",\n  \"email\": \"cliente@example.com\",\n  \"password\": \"SenhaForte123!\",\n  \"phone\": \"11999999999\",\n  \"birthDate\": \"2000-01-01T00:00:00Z\",\n  \"cpf\": \"12345678901\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/User",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "User"
+              ]
+            },
+            "description": "Cria um novo usuário comum no sistema. Não necessita de autenticação."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Administrador Teste\",\n  \"email\": \"admin@example.com\",\n  \"phone\": \"11988888888\",\n  \"birthDate\": \"1990-05-15T00:00:00Z\",\n  \"cpf\": \"98765432109\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/User/admin",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "User",
+                "admin"
+              ]
+            },
+            "description": "Cria um novo usuário administrador no sistema. Requer autenticação de administrador."
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cliente Teste Atualizado\",\n  \"phone\": \"11977777777\",\n  \"birthDate\": \"2000-01-01T00:00:00Z\",\n  \"situation\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/User/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "User",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "00000000-0000-0000-0000-000000000000",
+                  "description": "Guid do usuário a ser atualizado"
+                }
+              ]
+            },
+            "description": "Atualiza as informações de um usuário. Requer autenticação (Admin ou o próprio usuário)."
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"SenhaForte123!\",\n  \"newPassword\": \"NovaSenhaSuperForte123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/User/change-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "User",
+                "change-password"
+              ]
+            },
+            "description": "Altera a senha do usuário atual. Requer autenticação (Admin ou o próprio usuário)."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/User/:idUserToDeleted",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "User",
+                ":idUserToDeleted"
+              ],
+              "variable": [
+                {
+                  "key": "idUserToDeleted",
+                  "value": "00000000-0000-0000-0000-000000000000",
+                  "description": "Guid do usuário a ser excluído"
+                }
+              ]
+            },
+            "description": "Exclui um usuário do sistema. Requer autenticação de administrador."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints referentes à gestão de dados dos usuários (Cadastro, Edição, Senha e Deleção)."
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://localhost:7210",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

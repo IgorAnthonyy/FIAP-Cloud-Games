@@ -171,8 +171,6 @@ public static class ProgramExtensions
                         h.Password(rabbitMqConfig.Password);
                     });
 
-                cfg.Publish<UserCreatedEvent>(p => p.ExchangeType = "topic");
-
                 cfg.ConfigureEndpoints(context);
             });
         });
