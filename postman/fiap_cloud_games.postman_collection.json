@@ -42,7 +42,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"SenhaForte123!\"\n}"
+              "raw": "{\n  \"email\": \"admin@admin.com\",\n  \"password\": \"Admin@123\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/Access/login",
