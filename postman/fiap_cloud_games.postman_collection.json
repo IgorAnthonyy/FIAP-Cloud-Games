@@ -258,7 +258,7 @@
   "variable": [
     {
       "key": "base_url",
-      "value": "https://localhost:7210",
+      "value": "http://localhost:8000/user-service",
       "type": "string"
     },
     {
