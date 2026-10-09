@@ -172,11 +172,12 @@ RabbitMQ__VirtualHost: "/"
 RabbitMQ__Username: "fcg_user"
 ```
 
-Acesse o arquivo `k8s/secrets.yaml` e modifique as variáveis de ambiente abaixo:
-```yaml
-ConnectionStrings__DefaultConnection: "Host=postgres;Database=users;Username=fcg_user;Password=fcg_password"
-Jwt__Key: "ChaveSuperSecretaECompridaDeExemplo123!"
-RabbitMQ__Password: "fcg_password"
+Crie o Secret `users-api-secrets` com suas próprias credenciais:
+```bash
+kubectl create secret generic users-api-secrets -n fcg \
+  --from-literal=ConnectionStrings__DefaultConnection="Host=postgres;Database=users;Username=fcg_user;Password=fcg_password" \
+  --from-literal=Jwt__Key="ChaveSuperSecretaECompridaDeExemplo123!" \
+  --from-literal=RabbitMQ__Password="fcg_password"
 ```
 
 > É necessário subir um serviço de RabbitMQ e do PostgreSQL para poder rodar o projeto no Kubernetes.
@@ -186,7 +187,6 @@ RabbitMQ__Password: "fcg_password"
 ```bash
 cd FIAP-Cloud-Games
 kubectl apply -f k8s/configmap.yaml
-kubectl apply -f k8s/secrets.yaml
 kubectl apply -f k8s/deployment.yaml
 kubectl apply -f k8s/service.yaml
 ```

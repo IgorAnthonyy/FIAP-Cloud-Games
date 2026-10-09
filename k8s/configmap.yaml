@@ -2,10 +2,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: users-api-config
-  namespace: default
+  namespace: fcg
 data:
   Jwt__Issuer: "FCGames"
   RabbitMQ__Host: "rabbitmq"
   RabbitMQ__VirtualHost: "/"
   RabbitMQ__Username: "fcg_user"
-  OTEL_EXPORTER_OTLP_ENDPOINT: "http://tempo.default:4317"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://tempo:4317"
